@@ -41,6 +41,7 @@ const userSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
+
 userSchema.methods.isPasswordMatch = async function (password) {
   return password === this.password;
 };
