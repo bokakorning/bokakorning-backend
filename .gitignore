@@ -37,8 +37,6 @@ tmp/
 # Test directories (if any)
 tests/tmp/
 
-# NPM package-lock (use with caution if using pnpm or yarn)
-package-lock.json
 # Yarn lock file (if using Yarn)
 yarn.lock
 # pnpm lock file (if using pnpm)
