@@ -27,14 +27,37 @@ const userSchema = new mongoose.Schema(
     phone: {
       type: String,
     },
-    role: {
+    type: {
       type: String,
-      enum: ['user', 'admin'],
+      enum: ['user', 'admin','instructer'],
       default: 'user',
+    },
+    image: {
+      type: String,
+    },
+    doc: {
+      type: String,
     },
     createdAt: {
       type: Date,
       default: Date.now,
+    },
+
+    ///////Instructer Fields///
+    vehicle_model: {
+      type: String,
+    },
+    model_year: {
+      type: String,
+    },
+    transmission: {
+      type: String,
+    },
+    experience: {
+      type: String,
+    },
+    bio: {
+      type: String,
     },
 
   },

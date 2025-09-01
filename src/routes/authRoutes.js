@@ -1,21 +1,27 @@
 const express = require('express');
+const {
+    login,
+    register,
+    sendOTPForforgetpass,
+    verifyOTP,
+    changePassword,
+    getprofile,
+    updateprofile,
+    fileUpload,
+    getUser,
+} = require('@controllers/authController');
+const authMiddleware = require('@middlewares/authMiddleware');
+const { upload } = require("@services/fileUpload");
+
 const router = express.Router();
-const { login, register } = require('@controllers/authController');
-const auth = require('@middlewares/authMiddleware');
-
 router.post('/login', login);
-router.post('/register', register);
-
-router.get('/admin-only', auth('admin'), (req, res) => {
-  res.json({ message: 'Welcome, admin user!' });
-});
-
-router.get('/admin-seller', auth('admin', 'seller'), (req, res) => {
-  res.json({ message: 'Welcome, admin or seller!' });
-});
-
-router.get('/protected', auth(), (req, res) => {
-  res.json({ message: 'Welcome, authenticated user!', user: req.user });
-});
+router.post('/register',upload.single("doc"), register);
+router.post("/sendOTPForforgetpass", sendOTPForforgetpass);
+router.post("/verifyOTP", verifyOTP);
+router.post("/changePassword", changePassword);
+router.get("/profile", authMiddleware(["user", "admin"]), getprofile);
+router.post("/updateprofile", authMiddleware(["user", "admin"]), updateprofile);
+// router.post("/fileupload", upload.single("file"), fileUpload);
+router.get("/getUser", authMiddleware(["user", "admin"]), getUser);
 
 module.exports = router;

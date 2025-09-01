@@ -1,11 +1,18 @@
 const User = require('@models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const response = require("@responses/index");
+const Verification = require('@models/Verification');
+const mailNotification = require('@services/mailNotification');
+const userHelper = require("./../helper/user");
 
 module.exports = {
   register: async (req, res) => {
     try {
-      const { name, email, password, phone } = req.body;
+      const { name, email, password, phone,type } = req.body;
+if (req.file) {
+              doc = req.file.location; 
+            }
 
       if (password.length < 6) {
         return res
@@ -25,15 +32,18 @@ module.exports = {
         email,
         password: hashedPassword,
         phone,
+        type,
+        doc
       });
 
       await newUser.save();
 
       const userResponse = await User.findById(newUser._id).select('-password');
 
-      res
-        .status(201)
-        .json({ message: 'User registered successfully', user: userResponse });
+        response.created(res, {
+        message: 'User registered successfully',
+        user: userResponse,
+      });
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: 'Server error' });
@@ -57,20 +67,141 @@ module.exports = {
         return res.status(401).json({ message: 'Invalid credentials' });
       }
 
-      const token = jwt.sign({ id: user._id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
+      const token = jwt.sign({ id: user._id, email: user.email }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN });
 
-      res.json({
+      response.ok(res, {
+        message: 'Login successful',
         token,
-        user: {
-          id: user._id,
-          email: user.email,
-          name: user.name,
-        },
+        user,
       });
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: 'Server error' });
     }
   },
+sendOTPForforgetpass: async (req, res) => {
+    try {
+      const email = req.body.email;
+      const user = await User.findOne({ email });
 
+      if (!user) {
+        return response.badReq(res, { message: "Email does not exist." });
+      }
+
+      // let ran_otp = Math.floor(1000 + Math.random() * 9000);
+      let ran_otp = "0000";
+      // await mailNotification.sendOTPmailForSignup({
+      //   email: email,
+      //   code: ran_otp,
+      // });
+      let ver = new Verification({
+        user: user._id,
+        otp: ran_otp,
+        expiration_at: userHelper.getDatewithAddedMinutes(5),
+      });
+      await ver.save();
+      let token = await userHelper.encode(ver._id);
+      return response.ok(res, { message: "OTP sent.", token });
+    } catch (error) {
+      return response.error(res, error);
+    }
+  },
+
+  verifyOTP: async (req, res) => {
+    try {
+      const otp = req.body.otp;
+      const token = req.body.token;
+      console.log(otp, token)
+      if (!(otp && token)) {
+        return response.badReq(res, { message: "otp and token required." });
+      }
+      let verId = await userHelper.decode(token);
+      let ver = await Verification.findById(verId);
+      if (
+        otp == ver.otp &&
+        !ver.verified &&
+        new Date().getTime() < new Date(ver.expiration_at).getTime()
+      ) {
+        let token = await userHelper.encode(
+          ver._id + ":" + userHelper.getDatewithAddedMinutes(5).getTime()
+        );
+        ver.verified = true;
+        await ver.save();
+        return response.ok(res, { message: "OTP verified", token });
+      } else {
+        return response.notFound(res, { message: "Invalid OTP" });
+      }
+    } catch (error) {
+      return response.error(res, error);
+    }
+  },
+
+  changePassword: async (req, res) => {
+    try {
+      const token = req.body.token;
+      const password = req.body.password;
+      const data = await userHelper.decode(token);
+      const [verID, date] = data.split(":");
+      if (new Date().getTime() > new Date(date).getTime()) {
+        return response.forbidden(res, { message: "Session expired." });
+      }
+      let otp = await Verification.findById(verID);
+      console.log('otp.verified',otp.verified)
+      if (!otp.verified) {
+        return response.forbidden(res, { message: "unAuthorize" });
+      }
+      let user = await User.findById(otp.user);
+      if (!user) {
+        return response.forbidden(res, { message: "unAuthorize" });
+      }
+      await Verification.findByIdAndDelete(verID);
+      user.password = user.encryptPassword(password);
+      await user.save();
+      //mailNotification.passwordChange({ email: user.email });
+      return response.ok(res, { message: "Password changed! Login now." });
+    } catch (error) {
+      return response.error(res, error);
+    }
+  },
+
+  getprofile: async (req, res) => {
+    try {
+      const user = await User.findById(req.user.id, '-password');
+      return response.ok(res, user);
+    } catch (error) {
+      return response.error(res, error);
+    }
+  },
+
+  updateprofile: async (req, res) => {
+    try {
+      const payload = req.body
+      const user = await User.findByIdAndUpdate(req.user.id, payload, { new: true, upsert: true });
+      return response.ok(res, user);
+    } catch (error) {
+      return response.error(res, error);
+    }
+  },
+  fileUpload: async (req, res) => {
+    try {
+      let key = req.file && req.file.key;
+      console.log('DDDDDD', key)
+      return response.ok(res, {
+        message: "File uploaded.",
+        file: `${process.env.ASSET_ROOT}/${key}`,
+      });
+    } catch (error) {
+      return response.error(res, error);
+    }
+  },
+
+  getUser: async (req, res) => {
+    try {
+      let user = await User.find()
+      return response.ok(res, user);
+    } catch (err) {
+      console.log(err);
+      response.error(res, err);
+    }
+  },
 };
