@@ -42,6 +42,11 @@ const userSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
+     status: {
+      type: String,
+      default: "Pending",
+      enum: ["Pending", "Approved", "Rejected"],
+    },
 
     ///////Instructer Fields///
     vehicle_model: {
@@ -53,7 +58,10 @@ const userSchema = new mongoose.Schema(
     transmission: {
       type: String,
     },
-    experience: {
+    experience_year: {
+      type: String,
+    },
+    experience_month: {
       type: String,
     },
     bio: {

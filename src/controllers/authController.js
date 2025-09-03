@@ -10,6 +10,7 @@ module.exports = {
   register: async (req, res) => {
     try {
       const { name, email, password, phone,type } = req.body;
+      let doc;
 if (req.file) {
               doc = req.file.location; 
             }
@@ -24,17 +25,18 @@ if (req.file) {
       if (existingUser) {
         return res.status(400).json({ message: 'User already exists' });
       }
-
       const hashedPassword = await bcrypt.hash(password, 10);
-
-      const newUser = new User({
+const userobj={
         name,
         email,
         password: hashedPassword,
         phone,
         type,
-        doc
-      });
+      }
+      if (doc) {
+        userobj.doc=doc
+      }
+      const newUser = new User(userobj);
 
       await newUser.save();
 
