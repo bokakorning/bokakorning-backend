@@ -69,7 +69,7 @@ const userobj={
         return res.status(401).json({ message: 'Invalid credentials' });
       }
 
-      const token = jwt.sign({ id: user._id, email: user.email }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN });
+      const token = jwt.sign({ id: user._id, email: user.email,type:user.type }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN });
 
       response.ok(res, {
         message: 'Login successful',
@@ -178,8 +178,11 @@ sendOTPForforgetpass: async (req, res) => {
   updateprofile: async (req, res) => {
     try {
       const payload = req.body
+      if (req.file) {
+              payload.image = req.file.location; 
+            }
       const user = await User.findByIdAndUpdate(req.user.id, payload, { new: true, upsert: true });
-      return response.ok(res, user);
+      return response.ok(res, {user,message:"Profile Updated Succesfully"});
     } catch (error) {
       return response.error(res, error);
     }

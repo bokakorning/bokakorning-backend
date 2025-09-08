@@ -57,6 +57,7 @@ const userSchema = new mongoose.Schema(
     },
     transmission: {
       type: String,
+      enum: ["Both", "Automatic", "Manual"],
     },
     experience_year: {
       type: String,
