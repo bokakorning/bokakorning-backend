@@ -199,7 +199,6 @@ sendOTPForforgetpass: async (req, res) => {
       return response.error(res, error);
     }
   },
-
   getUser: async (req, res) => {
     try {
       let user = await User.find()
