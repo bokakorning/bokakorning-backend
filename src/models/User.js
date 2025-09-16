@@ -1,5 +1,16 @@
 const mongoose = require('mongoose');
 const bcrypt = require("bcryptjs");
+const pointSchema = new mongoose.Schema({
+  type: {
+    type: String,
+    enum: ["Point"],
+    required: true,
+  },
+  coordinates: {
+    type: [Number],
+    required: true,
+  },
+});
 
 const userSchema = new mongoose.Schema(
   {
@@ -38,6 +49,9 @@ const userSchema = new mongoose.Schema(
     doc: {
       type: String,
     },
+    location: {
+      type: pointSchema,
+    },
     createdAt: {
       type: Date,
       default: Date.now,
@@ -68,6 +82,10 @@ const userSchema = new mongoose.Schema(
     bio: {
       type: String,
     },
+    available: {
+      type: Boolean,
+      default:false
+    },
 
   },
   { timestamps: true },
@@ -81,6 +99,7 @@ userSchema.methods.isPasswordMatch = async function (password) {
 userSchema.methods.encryptPassword = (password) => {
   return bcrypt.hashSync(password, bcrypt.genSaltSync(10));
 };
+userSchema.index({ location: "2dsphere" });
 
 const User = mongoose.model('User', userSchema);
 

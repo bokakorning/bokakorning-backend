@@ -174,6 +174,43 @@ sendOTPForforgetpass: async (req, res) => {
       return response.error(res, error);
     }
   },
+  getnearbyinstructer: async (req, res) => {
+    try {
+    const payload=req.body
+      // const users = await User.find({
+      //     type: "instructer",
+      //     transmission: { $in: [payload.transmission, "Both"] },
+      //     location: {
+      //       $near: {
+      //         $maxDistance: 1609.34 * 10,
+      //         $geometry: payload.location,
+      //       },
+      //     },
+      //   }).select('-password');
+      const users = await User.aggregate([
+  {
+    $geoNear: {
+      near: payload.location, // { type: "Point", coordinates: [lng, lat] }
+      distanceField: "distance", // field where distance will be stored
+      maxDistance: 1609.34 * 8, // 8 miles in meters
+      spherical: true,
+      query: {
+        type: "instructer",
+        transmission: { $in: [payload.transmission, "Both"] },
+      }
+    }
+  },
+  {
+    $project: {
+      password: 0
+    }
+  }
+]);
+      return response.ok(res, users);
+    } catch (error) {
+      return response.error(res, error);
+    }
+  },
 
   updateprofile: async (req, res) => {
     try {
@@ -183,6 +220,18 @@ sendOTPForforgetpass: async (req, res) => {
             }
       const user = await User.findByIdAndUpdate(req.user.id, payload, { new: true, upsert: true });
       return response.ok(res, {user,message:"Profile Updated Succesfully"});
+    } catch (error) {
+      return response.error(res, error);
+    }
+  },
+  updateInstLocation: async (req, res) => {
+    try {
+      const track = req.body?.track;
+      if (!track) {
+        return response.error(res, "Location not provided");
+       }
+       await User.findByIdAndUpdate(req.user.id, { $set: { location: track } });
+      return response.ok(res);
     } catch (error) {
       return response.error(res, error);
     }
