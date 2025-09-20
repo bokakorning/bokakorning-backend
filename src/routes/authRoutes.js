@@ -22,7 +22,11 @@ router.post("/sendOTPForforgetpass", sendOTPForforgetpass);
 router.post("/verifyOTP", verifyOTP);
 router.post("/changePassword", changePassword);
 router.get("/profile",authMiddleware(["user", "admin","instructer"]), getprofile);
-router.post("/updateprofile", authMiddleware(["user", "admin","instructer"]),upload.single("image"), updateprofile);
+router.post("/updateprofile", authMiddleware(["user", "admin","instructer"]),upload.fields([
+    { name: "image", maxCount: 1 },
+    { name: "doc", maxCount: 1 }
+  ]),
+ updateprofile);
 router.post("/getnearbyinstructer",authMiddleware(["user", "admin","instructer"]), getnearbyinstructer);
 router.post("/updateInstLocation", authMiddleware(["user", "admin","instructer"]), updateInstLocation);
 // router.post("/fileupload", upload.single("file"), fileUpload);

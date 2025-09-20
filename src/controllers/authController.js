@@ -215,8 +215,12 @@ sendOTPForforgetpass: async (req, res) => {
   updateprofile: async (req, res) => {
     try {
       const payload = req.body
-      if (req.file) {
-              payload.image = req.file.location; 
+      // console.log("req",req?.files)
+      if (req.files&&req.files?.image?.length>0) {
+              payload.image = req.files?.image?.[0].location; 
+            }
+      if (req.files&&req.files?.doc?.length>0) {
+              payload.doc = req.files?.doc?.[0].location; 
             }
       const user = await User.findByIdAndUpdate(req.user.id, payload, { new: true, upsert: true });
       return response.ok(res, {user,message:"Profile Updated Succesfully"});

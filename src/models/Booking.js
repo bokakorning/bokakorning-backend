@@ -1,14 +1,24 @@
 'use strict';
 const mongoose = require('mongoose');
-
+const pointSchema = new mongoose.Schema({
+  type: {
+    type: String,
+    enum: ["Point"],
+    required: true,
+  },
+  coordinates: {
+    type: [Number],
+    required: true,
+  },
+});
 const bookingSchema = new mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "user"
+        ref: "User"
     },
     instructer: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "user"
+        ref: "User"
     },
     rejectedbyinstructer: [
       {
@@ -22,6 +32,23 @@ const bookingSchema = new mongoose.Schema({
     },
     selectedTime: {
         type: String
+    },
+    status: {
+      type: String,
+      default: "pending",
+      // enum:['pending','started','cancel','complete']
+    },
+    paymentid: {
+      type: String,
+    },
+    payment_mode: {
+      type: String,
+    },
+     user_location: {
+      type: pointSchema,
+    },
+    pickup_address: {
+      type: String,
     },
 }, {
     timestamps: true
