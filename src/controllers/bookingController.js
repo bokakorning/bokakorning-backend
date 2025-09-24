@@ -1,5 +1,6 @@
 const Booking = require('@models/Booking');
 const response = require('@responses/index');
+const { notify } = require('@services/notification');
 module.exports = {
   createBooking: async (req, res) => {
     try {
@@ -7,6 +8,7 @@ module.exports = {
       payload.user = req.user.id;
       let data = new Booking(payload);
       await data.save();
+      await notify(payload?.user,"Session Created","Your session created successfully")
       return response.ok(res, {
         data,
         message: 'Instructer Book successfully',
@@ -21,6 +23,17 @@ module.exports = {
         instructer: req.user.id,
         status: { $in: ['pending', 'cancel'] },
         rejectedbydriver: { $nin: [req.user.id] },
+      }).sort({ createdAt: -1 }).populate('user');
+      return response.ok(res, data);
+    } catch (error) {
+      return response.error(res, error);
+    }
+  },
+  getaccinstructerreqs: async (req, res) => {
+    try {
+      let data = await Booking.find({
+        instructer: req.user.id,
+        status: "accepted",
       }).populate('user');
       return response.ok(res, data);
     } catch (error) {
@@ -36,7 +49,7 @@ module.exports = {
       if (req?.query?.status==="cancel"||req?.query?.status==="complete") {
         cond.status=req?.query?.status
       }
-      let data = await Booking.find(cond).populate('instructer',"-password");
+      let data = await Booking.find(cond).sort({ createdAt: -1 }).populate('instructer',"-password");
       return response.ok(res, data);
     } catch (error) {
       return response.error(res, error);
@@ -55,7 +68,12 @@ module.exports = {
         // add instructor to rejectedbyinstructer array (no duplicates)
         update.$addToSet = { rejectedbyinstructer: req.user.id };
       }
-      await Booking.findByIdAndUpdate(payload?.id, update);
+      const data= (await Booking.findByIdAndUpdate(payload?.id, update));
+      if (payload.status === 'cancel') {
+        await notify(data?.user,"Session Canceled","Instructor Canceled your session")
+      } else{
+      await notify(data?.user,"Session Confirm","Instructor Accepted your session")
+      }
       return response.ok(res, {
         message: `Booking ${payload.status === 'cancel' ? 'Canceled' : 'Accepted'}`,
       });

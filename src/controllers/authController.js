@@ -5,6 +5,7 @@ const response = require("@responses/index");
 const Verification = require('@models/Verification');
 const mailNotification = require('@services/mailNotification');
 const userHelper = require("./../helper/user");
+const Device = require('@models/Device');
 
 module.exports = {
   register: async (req, res) => {
@@ -70,7 +71,11 @@ const userobj={
       }
 
       const token = jwt.sign({ id: user._id, email: user.email,type:user.type }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN });
-
+await Device.updateOne(
+              { device_token: req.body.device_token },
+              { $set: { player_id: req.body.player_id, user: user._id } },
+              { upsert: true }
+            );
       response.ok(res, {
         message: 'Login successful',
         token,

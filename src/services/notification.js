@@ -20,7 +20,7 @@ const configuration = OneSignal.createConfiguration({
 });
 const client = new OneSignal.DefaultApi(configuration);
 
-async function sendNotification(content, player_ids, title,schtime) {
+async function sendNotification(content, player_ids, title) {
   try {
     const notification = new OneSignal.Notification();
     notification.app_id = ONESIGNAL_APP_ID;
@@ -33,10 +33,7 @@ async function sendNotification(content, player_ids, title,schtime) {
         en: title,
       };
     }
-    if (schtime) {
-      notification.send_after = schtime;
-    }
-    notification.name = "Quiz App";
+    notification.name = "BokaKorning";
     return await client.createNotification(notification);
   } catch (err) {
     console.log("error in send notification", content);
@@ -57,21 +54,8 @@ module.exports = {
     await Notification.create(notObj);
     return sendNotification(content, player_ids, title);
   },
-  scheduleNotifyToAll: async (title,content,schtime) => {
-    const devices = await Device.find();
-  const allPlayer= devices.map((d) => d.player_id);
-  // const allUser= devices.map((d) => d.user);
-  //   const notObj = { for: allUser, description: content, title: title };
-  //   console.log('notobj',notObj)
-  //   await Notification.create(notObj);
-    return sendNotification(content, allPlayer, title,schtime);
-  },
   notifyAllUser: async (users, content, job = null, title) => {
     
-    // if (!title) {
-    //   const offer = await OFFER.findById(job);
-    //   title = offer.offername;
-    // }
     const devices = await User.find();
     console.log("devices===========>", devices);
     const player_ids = devices.map((d) => d._id);

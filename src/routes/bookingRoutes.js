@@ -5,6 +5,7 @@ const authMiddleware = require('@middlewares/authMiddleware');
 const router = express.Router();
 router.post('/createBooking',authMiddleware(["user", "admin","instructer"]),booking.createBooking);
 router.get('/getinstructerreqs',authMiddleware(["admin","instructer"]),booking.getinstructerreqs);
+router.get('/getaccinstructerreqs',authMiddleware(["admin","instructer"]),booking.getaccinstructerreqs);
 router.get('/getuserbookings',authMiddleware(["user", "admin"]),booking.getuserbookings);
 router.put('/updatebookingstatus',authMiddleware(["user", "admin","instructer"]),booking.updatebookingstatus);
 
