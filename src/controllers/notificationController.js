@@ -1,5 +1,4 @@
-const mongoose = require("mongoose");
-const Notification = mongoose.model("Notification");
+const Notification = require('@models/Notification');
 
 const response = require('../responses');
 
