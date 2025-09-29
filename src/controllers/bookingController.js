@@ -9,6 +9,9 @@ module.exports = {
       let data = new Booking(payload);
       await data.save();
       await notify(payload?.user,"Session Created","Your session created successfully")
+      if (payload?.instructer) {
+        await notify(payload?.instructer,"New Request", "You have a new lesson request.")
+      }
       return response.ok(res, {
         data,
         message: 'Instructer Book successfully',
@@ -22,7 +25,7 @@ module.exports = {
       let data = await Booking.find({
         instructer: req.user.id,
         status: { $in: ['pending', 'cancel'] },
-        rejectedbydriver: { $nin: [req.user.id] },
+        rejectedbyinstructer: { $nin: [req.user.id] },
       }).sort({ createdAt: -1 }).populate('user');
       return response.ok(res, data);
     } catch (error) {
@@ -70,12 +73,28 @@ module.exports = {
       }
       const data= (await Booking.findByIdAndUpdate(payload?.id, update));
       if (payload.status === 'cancel') {
-        await notify(data?.user,"Session Canceled","Instructor Canceled your session")
+        await notify(data?.user,"Session Canceled","Your session was canceled by the instructor. Please select another instructor.")
       } else{
-      await notify(data?.user,"Session Confirm","Instructor Accepted your session")
+      await notify(data?.user,"Session Confirm","Your session has been accepted by the instructor.")
       }
       return response.ok(res, {
         message: `Booking ${payload.status === 'cancel' ? 'Canceled' : 'Accepted'}`,
+      });
+    } catch (error) {
+      return response.error(res, error);
+    }
+  },
+  reBooking: async (req, res) => {
+    try {
+      const payload = req?.body || {};
+      let data = await Booking.findByIdAndUpdate(payload?.booking_id, { $set: { status: 'pending',instructer:payload?.instructer,selectedTime:payload?.selectedTime } });
+      await notify(payload?.user,"Session Created","Your session created successfully")
+      if (payload?.instructer) {
+        await notify(payload?.instructer,"New Request", "You have a new lesson request.")
+      }
+      return response.ok(res, {
+        data,
+        message: 'Instructer Book successfully',
       });
     } catch (error) {
       return response.error(res, error);

@@ -50,6 +50,12 @@ const bookingSchema = new mongoose.Schema({
     pickup_address: {
       type: String,
     },
+    transmission: {
+      type: String,
+    },
+    total: {
+      type: String,
+    },
 }, {
     timestamps: true
 });

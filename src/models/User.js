@@ -79,6 +79,9 @@ const userSchema = new mongoose.Schema(
     experience_month: {
       type: String,
     },
+    rate_per_hour: {
+      type: String,
+    },
     bio: {
       type: String,
     },
