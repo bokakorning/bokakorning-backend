@@ -1,6 +1,6 @@
 const OneSignal = require('@onesignal/node-onesignal');
 const Device = require('@models/Device');
-const Notification = require('@models/Notification');
+const Notification = require('@models/Notification2');
 const User = require('@models/User');
 
 const ONESIGNAL_APP_ID = process.env.ONESIGNAL_APP_ID;
