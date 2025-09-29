@@ -1,6 +1,6 @@
-require("dotenv").config();
-require("module-alias/register");
-const app = require("./app");
+require('dotenv').config();
+require('module-alias/register');
+const app = require('./app');
 
 const PORT = process.env.PORT || 3001;
 

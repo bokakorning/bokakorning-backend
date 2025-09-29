@@ -1,10 +1,10 @@
-const nodemailer = require("nodemailer");
-var moment = require("moment");
+const nodemailer = require('nodemailer');
+var moment = require('moment');
 
-const comapny = 'QuizzApp'
+const comapny = 'QuizzApp';
 
 const transporter = nodemailer.createTransport({
-  service: "gmail",
+  service: 'gmail',
   auth: {
     user: process.env.MAIL_USER,
     pass: process.env.MAIL_PASS,
@@ -33,37 +33,37 @@ module.exports = {
   sendOTPmail: async ({ email, code }) => {
     try {
       const html = `<div> \r\n<p>Password Reset Instructions<\/p>\r\n\r\n<p>Your ${comapny} One-Time password reset code is: ${code}. Enter online when prompted. This passcode will expire in 5 minutes<\/p><\/br>Thank you for updating your password.<\/p>\r\n\r\n<p><b>${comapny}<\/b><\/p>\r\n<\/div>`;
-      return await sendMail(email, "Password Reset Instructions", html);
+      return await sendMail(email, 'Password Reset Instructions', html);
     } catch (err) {
       console.log(err);
-      throw new Error("[sendOTPmail]Could not send OTP mail");
+      throw new Error('[sendOTPmail]Could not send OTP mail');
     }
   },
   sendOTPmailForSignup: async ({ email, code }) => {
     try {
       const html = `<div><p>Your Registration OTP</p> <p> Your OTP for registration: ${code}.</p><p> Please use this code to complete your registration.</p><p>Regards,</p><p><b>${comapny}<\/b></p></div>`;
-      return await sendMail(email, "Your Registration OTP", html);
+      return await sendMail(email, 'Your Registration OTP', html);
     } catch (err) {
       console.log(err);
-      throw new Error("[sendOTPmail]Could not send OTP mail");
+      throw new Error('[sendOTPmail]Could not send OTP mail');
     }
   },
   passwordChange: async ({ email }) => {
     try {
       const html = `<div> Your password has been reset, if you didn't update your password, please call us on (.) between 9am - 5pm Monday to Friday. \r\n\r\n${comapny}  </div>`;
-      return await sendMail(email, "PASSWORD RESET NOTIFICATION EMAIL", html);
+      return await sendMail(email, 'PASSWORD RESET NOTIFICATION EMAIL', html);
     } catch (err) {
       console.log(err);
-      throw new Error("[passwordChange]Could not send OTP mail");
+      throw new Error('[passwordChange]Could not send OTP mail');
     }
   },
   confirmMail: async ({ email }) => {
     try {
       const html = `<div>We are arrive to your loacation in 20-25 minutes  </div>`;
-      return await sendMail(email, "Comming for work", html);
+      return await sendMail(email, 'Comming for work', html);
     } catch (err) {
       console.log(err);
-      throw new Error("something went wrong");
+      throw new Error('something went wrong');
     }
   },
   supportmail: async (detail) => {
@@ -72,10 +72,10 @@ module.exports = {
       <p>Please check the admin pannel <a href="https://adn-admin.vercel.app/get-in-touch" target="_blank">https://adn-admin.vercel.app/get-in-touch</a></p>
       </div>`;
       // info@adncleaningservices.co.uk
-      return await sendMail('info@adncleaningservices.co.uk', "Support", html);
+      return await sendMail('info@adncleaningservices.co.uk', 'Support', html);
     } catch (err) {
       console.log(err);
-      throw new Error("something went wrong");
+      throw new Error('something went wrong');
     }
   },
   bookMail: async ({ user, service, type }) => {
@@ -88,7 +88,7 @@ module.exports = {
       <p>Your appointment with ADN Cleaning Services is ${type}. </p>
       
       <p style="margin-top:20px">APPOINTMENT DATE</p>
-      <strong>${moment(service.slot.date).format("ddd, MMM DD,YYYY")}
+      <strong>${moment(service.slot.date).format('ddd, MMM DD,YYYY')}
       </strong>
       
       <p style="margin-top:20px">APPOINTMENT TIME
@@ -106,10 +106,10 @@ module.exports = {
       <p>Thanks and Regards</p>
       <p><strong>ADN Cleaning Services</strong></p>
       `;
-      return await sendMail(user.email, "Appointment Confirmation", html);
+      return await sendMail(user.email, 'Appointment Confirmation', html);
     } catch (err) {
       console.log(err);
-      throw new Error("something went wrong");
+      throw new Error('something went wrong');
     }
   },
   bookMailtoAdmin: async ({ user, service, type }) => {
@@ -122,7 +122,7 @@ module.exports = {
       <strong>Client Email : ${user.email}
       </strong>
       <p style="margin-top:20px">APPOINTMENT DATE</p>
-      <strong>${moment(service.slot.date).format("ddd, MMM DD,YYYY")}
+      <strong>${moment(service.slot.date).format('ddd, MMM DD,YYYY')}
       </strong>
       
       <p style="margin-top:20px">APPOINTMENT TIME
@@ -140,7 +140,7 @@ module.exports = {
       return await sendMail('info@adncleaningservice.co.uk', type, html);
     } catch (err) {
       console.log(err);
-      throw new Error("something went wrong");
+      throw new Error('something went wrong');
     }
   },
   bookReminder: async ({ user, service, type }) => {
@@ -152,7 +152,7 @@ module.exports = {
       <p>You have an upcoming appointment for ${type}. </p>
       
       <p style="margin-top:20px">APPOINTMENT DATE</p>
-      <strong>${moment(service.slot.date).format("ddd, MMM DD,YYYY")}
+      <strong>${moment(service.slot.date).format('ddd, MMM DD,YYYY')}
       </strong>
       
       <p style="margin-top:20px">APPOINTMENT TIME
@@ -163,10 +163,10 @@ module.exports = {
       <p style="margin-top:20px">SERVICE ADDRESS</p>
       <strong>${service.location}
       </strong></div>`;
-      return await sendMail(user.email, "Appointment Confirmation", html);
+      return await sendMail(user.email, 'Appointment Confirmation', html);
     } catch (err) {
       console.log(err);
-      throw new Error("something went wrong");
+      throw new Error('something went wrong');
     }
   },
   followUP: async ({ user, service, type }) => {
@@ -178,19 +178,19 @@ module.exports = {
       <p>Thank you for choosing ADN Cleaning Services.We work really hard to provide the best experience for our customers and are always looking for ways to improve. If you have a second to rate the service ${type} , we would appreciate your feedback.  <br/>   <br/> All the best, ADN Cleaning Services </p>
       
       `;
-      return await sendMail(user.email, "Appointment Confirmation", html);
+      return await sendMail(user.email, 'Appointment Confirmation', html);
     } catch (err) {
       console.log(err);
-      throw new Error("something went wrong");
+      throw new Error('something went wrong');
     }
   },
   bookCancelMail: async ({ email }) => {
     try {
       const html = `<div>We are arrive to your loacation in 20-25 minutes  </div>`;
-      return await sendMail(email, "Booking Cancelation", html);
+      return await sendMail(email, 'Booking Cancelation', html);
     } catch (err) {
       console.log(err);
-      throw new Error("something went wrong");
+      throw new Error('something went wrong');
     }
   },
   bookRescheduled: async ({ user, service, type }) => {
@@ -202,7 +202,7 @@ module.exports = {
       <p>Your appointment for ${type} has been successfully rescheduled. </p>
       
       <p style="margin-top:20px">NEW DATE</p>
-      <strong>${moment(service.slot.date).format("ddd, MMM DD,YYYY")}
+      <strong>${moment(service.slot.date).format('ddd, MMM DD,YYYY')}
       </strong>
       
       <p style="margin-top:20px">NEW APPOINTMENT TIME
@@ -213,19 +213,19 @@ module.exports = {
       <p style="margin-top:20px">SERVICE ADDRESS</p>
       <strong>${service.location}
       </strong></div>`;
-      return await sendMail(user.email, "Appointment Confirmation", html);
+      return await sendMail(user.email, 'Appointment Confirmation', html);
     } catch (err) {
       console.log(err);
-      throw new Error("something went wrong");
+      throw new Error('something went wrong');
     }
   },
   sendmessage: async ({ email, message }) => {
     try {
       const html = `<p>Testing message for keyake.${message}</p>`;
-      return await sendMail(email, "Mail subject", html);
+      return await sendMail(email, 'Mail subject', html);
     } catch (err) {
       console.log(err);
-      throw new Error("something went wrong");
+      throw new Error('something went wrong');
     }
   },
 };

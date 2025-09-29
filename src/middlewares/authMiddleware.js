@@ -1,15 +1,16 @@
-const passport = require("passport");
- 
+const passport = require('passport');
+
 module.exports = function authMiddleware(allowedRoles = []) {
   return (req, res, next) => {
-    passport.authenticate("jwt", { session: false }, (err, user) => {
+    passport.authenticate('jwt', { session: false }, (err, user) => {
       // console.log('fffdfsdbsfsbf', user, err)
-      if (err || !user) return res.status(401).json({ message: "Unauthorized" });
- 
+      if (err || !user)
+        return res.status(401).json({ message: 'Unauthorized' });
+
       if (allowedRoles.length && !allowedRoles.includes(user.type)) {
-        return res.status(403).json({ message: "Access denied" });
+        return res.status(403).json({ message: 'Access denied' });
       }
- 
+
       req.user = user;
       next();
     })(req, res, next);

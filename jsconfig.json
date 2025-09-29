@@ -1,18 +1,17 @@
 {
-    "compilerOptions": {
-      "baseUrl": "./",
-      "paths": {
-        "@models/*": ["src/models/*"],
-        "@controllers/*": ["src/controllers/*"],
-        "@services/*": ["src/services/*"],
-        "@utils/*": ["src/utils/*"],
-        "@config/*": ["src/config/*"],
-        "@middlewares/*": ["src/middlewares/*"],
-        "@routes/*": ["src/routes/*"],
-        "@tests/*": ["src/tests/*"],
-        "@assets/*": ["src/assets/*"],
-      }
-    },
-    "include": ["src/**/*.js"]
+  "compilerOptions": {
+    "baseUrl": "./",
+    "paths": {
+      "@models/*": ["src/models/*"],
+      "@controllers/*": ["src/controllers/*"],
+      "@services/*": ["src/services/*"],
+      "@utils/*": ["src/utils/*"],
+      "@config/*": ["src/config/*"],
+      "@middlewares/*": ["src/middlewares/*"],
+      "@routes/*": ["src/routes/*"],
+      "@tests/*": ["src/tests/*"],
+      "@assets/*": ["src/assets/*"]
+    }
+  },
+  "include": ["src/**/*.js"]
 }
-  

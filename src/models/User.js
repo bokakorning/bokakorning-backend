@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
-const bcrypt = require("bcryptjs");
+const bcrypt = require('bcryptjs');
 const pointSchema = new mongoose.Schema({
   type: {
     type: String,
-    enum: ["Point"],
+    enum: ['Point'],
     required: true,
   },
   coordinates: {
@@ -40,7 +40,7 @@ const userSchema = new mongoose.Schema(
     },
     type: {
       type: String,
-      enum: ['user', 'admin','instructer'],
+      enum: ['user', 'admin', 'instructer'],
       default: 'user',
     },
     image: {
@@ -56,10 +56,10 @@ const userSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
-     status: {
+    status: {
       type: String,
-      default: "Pending",
-      enum: ["Pending", "Approved", "Rejected"],
+      default: 'Pending',
+      enum: ['Pending', 'Approved', 'Rejected'],
     },
 
     ///////Instructer Fields///
@@ -71,7 +71,7 @@ const userSchema = new mongoose.Schema(
     },
     transmission: {
       type: String,
-      enum: ["Both", "Automatic", "Manual"],
+      enum: ['Both', 'Automatic', 'Manual'],
     },
     experience_year: {
       type: String,
@@ -87,13 +87,11 @@ const userSchema = new mongoose.Schema(
     },
     available: {
       type: Boolean,
-      default:false
+      default: false,
     },
-
   },
   { timestamps: true },
 );
-
 
 userSchema.methods.isPasswordMatch = async function (password) {
   return password === this.password;
@@ -102,7 +100,7 @@ userSchema.methods.isPasswordMatch = async function (password) {
 userSchema.methods.encryptPassword = (password) => {
   return bcrypt.hashSync(password, bcrypt.genSaltSync(10));
 };
-userSchema.index({ location: "2dsphere" });
+userSchema.index({ location: '2dsphere' });
 
 const User = mongoose.model('User', userSchema);
 

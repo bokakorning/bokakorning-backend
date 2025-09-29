@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const pointSchema = new mongoose.Schema({
   type: {
     type: String,
-    enum: ["Point"],
+    enum: ['Point'],
     required: true,
   },
   coordinates: {
@@ -11,31 +11,32 @@ const pointSchema = new mongoose.Schema({
     required: true,
   },
 });
-const bookingSchema = new mongoose.Schema({
+const bookingSchema = new mongoose.Schema(
+  {
     user: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User"
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
     },
     instructer: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User"
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
     },
     rejectedbyinstructer: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
+        ref: 'User',
       },
     ],
     date: {
       type: Date,
-      default:new Date()
+      default: new Date(),
     },
     selectedTime: {
-        type: String
+      type: String,
     },
     status: {
       type: String,
-      default: "pending",
+      default: 'pending',
       // enum:['pending','started','cancel','complete']
     },
     paymentid: {
@@ -44,7 +45,7 @@ const bookingSchema = new mongoose.Schema({
     payment_mode: {
       type: String,
     },
-     user_location: {
+    user_location: {
       type: pointSchema,
     },
     pickup_address: {
@@ -56,19 +57,21 @@ const bookingSchema = new mongoose.Schema({
     total: {
       type: String,
     },
-}, {
-    timestamps: true
-});
+  },
+  {
+    timestamps: true,
+  },
+);
 
 bookingSchema.set('toJSON', {
-    getters: true,
-    virtuals: false,
-    transform: (doc, ret, options) => {
-        delete ret.__v;
-        return ret;
-    }
+  getters: true,
+  virtuals: false,
+  transform: (doc, ret, options) => {
+    delete ret.__v;
+    return ret;
+  },
 });
 
 const Booking = mongoose.model('Booking', bookingSchema);
 
-module.exports = Booking
+module.exports = Booking;

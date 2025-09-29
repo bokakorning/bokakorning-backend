@@ -1,5 +1,4 @@
-const OneSignal = require("@onesignal/node-onesignal");
-const mongoose = require("mongoose");
+const OneSignal = require('@onesignal/node-onesignal');
 const Device = require('@models/Device');
 const Notification = require('@models/Notification');
 const User = require('@models/User');
@@ -9,14 +8,13 @@ const ONESIGNAL_APP_ID = process.env.ONESIGNAL_APP_ID;
 const ONESIGNAL_REST_API_KEY = {
   getToken() {
     return process.env.ONESIGNAL_REST_API_KEY;
-  }
+  },
 };
 const configuration = OneSignal.createConfiguration({
-
   restApiKey: process.env.ONESIGNAL_REST_API_KEY,
   authMethods: {
-    rest_api_key: { tokenProvider: ONESIGNAL_REST_API_KEY }
-  }
+    rest_api_key: { tokenProvider: ONESIGNAL_REST_API_KEY },
+  },
 });
 const client = new OneSignal.DefaultApi(configuration);
 
@@ -33,11 +31,11 @@ async function sendNotification(content, player_ids, title) {
         en: title,
       };
     }
-    notification.name = "BokaKorning";
+    notification.name = 'BokaKorning';
     return await client.createNotification(notification);
   } catch (err) {
-    console.log("error in send notification", content);
-    console.error("error in send notification", err);
+    console.log('error in send notification', content);
+    console.error('error in send notification', err);
   }
 }
 async function findDevices(user) {
@@ -46,18 +44,17 @@ async function findDevices(user) {
 }
 
 module.exports = {
-  notify: async (user,title,content) => {
+  notify: async (user, title, content) => {
     const player_ids = await findDevices(user);
     // console.log('player_ids====>', player_ids)
     const notObj = { for: user, description: content, title: title };
-    console.log('notobj',notObj)
+    console.log('notobj', notObj);
     await Notification.create(notObj);
     return sendNotification(content, player_ids, title);
   },
   notifyAllUser: async (users, content, job = null, title) => {
-    
     const devices = await User.find();
-    console.log("devices===========>", devices);
+    console.log('devices===========>', devices);
     const player_ids = devices.map((d) => d._id);
 
     const notObj = { for: player_ids, description: content, title: title };

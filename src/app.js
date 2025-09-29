@@ -1,15 +1,15 @@
-const express = require("express");
-const cors = require("cors");
-const helmet = require("helmet");
-const morgan = require("morgan");
-const passport = require("passport");
-const connectDB = require("@config/db");
+const express = require('express');
+const cors = require('cors');
+const helmet = require('helmet');
+const morgan = require('morgan');
+const passport = require('passport');
+const connectDB = require('@config/db');
 
 // Load environment variables
-require("dotenv").config();
+require('dotenv').config();
 
 // Initialize Passport configuration
-require("@config/passport");
+require('@config/passport');
 
 // Initialize Express app
 const app = express();
@@ -21,7 +21,7 @@ connectDB();
 app.use(express.json());
 app.use(cors());
 app.use(helmet());
-app.use(morgan("dev"));
+app.use(morgan('dev'));
 
 // Initialize Passport
 app.use(passport.initialize());
@@ -31,14 +31,14 @@ const routes = require('./routes');
 routes(app);
 
 // Health Check Route
-app.get("/", (req, res) => {
-  res.status(200).json({ status: "OK" });
+app.get('/', (req, res) => {
+  res.status(200).json({ status: 'OK' });
 });
 
 // Global Error Handler
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).json({ error: "Something went wrong!" });
+  res.status(500).json({ error: 'Something went wrong!' });
 });
 
 module.exports = app;

@@ -1,6 +1,6 @@
-"use strict";
+'use strict';
 
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 const transactionSchema = new mongoose.Schema(
   {
     note: {
@@ -8,27 +8,27 @@ const transactionSchema = new mongoose.Schema(
     },
     req_user: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: 'User',
     },
     amount: {
       type: Number,
     },
     type: {
-        type: String,
-        enum:['EARN','WITHDRAWAL']
-      },
+      type: String,
+      enum: ['EARN', 'WITHDRAWAL'],
+    },
     status: {
-        type: String,
-        default: 'Pending',
-        enum:['Pending','Approved']
-      },
+      type: String,
+      default: 'Pending',
+      enum: ['Pending', 'Approved'],
+    },
   },
   {
     timestamps: true,
-  }
+  },
 );
 
-transactionSchema.set("toJSON", {
+transactionSchema.set('toJSON', {
   getters: true,
   virtuals: false,
   transform: (doc, ret, options) => {
@@ -37,4 +37,4 @@ transactionSchema.set("toJSON", {
   },
 });
 
-module.exports = mongoose.model("Transaction", transactionSchema);
+module.exports = mongoose.model('Transaction', transactionSchema);

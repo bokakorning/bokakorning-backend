@@ -82,7 +82,6 @@
 //         $set: { status: "Approved" },
 //       });
 
-
 //       return response.ok(res, { message: "Status update succesfully" });
 //     } catch (error) {
 //       return response.error(res, error);
