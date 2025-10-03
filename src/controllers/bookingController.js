@@ -87,7 +87,7 @@ module.exports = {
   },
   getschedulebookings: async (req, res) => {
     try {
-      let data = await Booking.find({sheduleSeesion:true})
+      let data = await Booking.find({sheduleSeesion:true,instructer:{ $exists: false }})
         .sort({ createdAt: -1 })
         .populate('user', '-password');
       return response.ok(res, data);
