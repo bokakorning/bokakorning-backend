@@ -48,8 +48,13 @@ router.post(
 // router.post("/fileupload", upload.single("file"), fileUpload);
 router.get(
   '/getUser',
-  // authMiddleware(['user', 'admin', 'instructer']),
+  authMiddleware(['user', 'admin', 'instructer']),
   getUser,
+);
+router.post(
+  '/updateInstRate',
+  authMiddleware([ 'admin']),
+  updateInstRate,
 );
 
 module.exports = router;

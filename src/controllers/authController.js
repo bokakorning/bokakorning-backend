@@ -254,6 +254,18 @@ module.exports = {
       return response.error(res, error);
     }
   },
+  updateInstRate: async (req, res) => {
+    try {
+      const payload = req.body;
+      if (!payload?.instructer_id) {
+        return response.error(res, 'Instructer id is not provided');
+      }
+      await User.findByIdAndUpdate(payload?.instructer_id, { $set: { rate_per_hour: payload?.rate_per_hour } });
+      return response.ok(res);
+    } catch (error) {
+      return response.error(res, error);
+    }
+  },
   fileUpload: async (req, res) => {
     try {
       let key = req.file && req.file.key;
@@ -266,15 +278,6 @@ module.exports = {
       return response.error(res, error);
     }
   },
-  // getUser: async (req, res) => {
-  //   try {
-  //     let user = await User.find();
-  //     return response.ok(res, user);
-  //   } catch (err) {
-  //     console.log(err);
-  //     response.error(res, err);
-  //   }
-  // },
   getUser: async (req, res) => {
     try {
       const { page = 1, limit = 20,type } = req.query;
