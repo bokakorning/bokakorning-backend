@@ -89,7 +89,7 @@ module.exports = {
     try {
       let data = await Booking.find({sheduleSeesion:true})
         .sort({ createdAt: -1 })
-        .populate('instructer', '-password');
+        .populate('user', '-password');
       return response.ok(res, data);
     } catch (error) {
       return response.error(res, error);
