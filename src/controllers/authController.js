@@ -266,9 +266,23 @@ module.exports = {
       return response.error(res, error);
     }
   },
+  // getUser: async (req, res) => {
+  //   try {
+  //     let user = await User.find();
+  //     return response.ok(res, user);
+  //   } catch (err) {
+  //     console.log(err);
+  //     response.error(res, err);
+  //   }
+  // },
   getUser: async (req, res) => {
     try {
-      let user = await User.find();
+      const { page = 1, limit = 20,type } = req.query;
+      let user = await User.find({type:type}).sort({
+          createdAt: -1,
+        })
+        .limit(limit * 1)
+        .skip((page - 1) * limit);;
       return response.ok(res, user);
     } catch (err) {
       console.log(err);
