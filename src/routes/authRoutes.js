@@ -11,6 +11,7 @@ const {
   getnearbyinstructer,
   updateInstLocation,
   getUser,
+  updateInstRate
 } = require('@controllers/authController');
 const authMiddleware = require('@middlewares/authMiddleware');
 const { upload } = require('@services/fileUpload');
