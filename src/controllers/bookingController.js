@@ -85,6 +85,16 @@ module.exports = {
       return response.error(res, error);
     }
   },
+  getschedulebookings: async (req, res) => {
+    try {
+      let data = await Booking.find({sheduleSeesion:true})
+        .sort({ createdAt: -1 })
+        .populate('instructer', '-password');
+      return response.ok(res, data);
+    } catch (error) {
+      return response.error(res, error);
+    }
+  },
   updatebookingstatus: async (req, res) => {
     try {
       const payload = req?.body || {};

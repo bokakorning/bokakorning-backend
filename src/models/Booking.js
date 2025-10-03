@@ -31,6 +31,12 @@ const bookingSchema = new mongoose.Schema(
       type: Date,
       default: new Date(),
     },
+    sheduleDate: {
+      type: Date,
+    },
+    sheduleSeesion: {
+      type: Boolean,
+    },
     selectedTime: {
       type: String,
     },
