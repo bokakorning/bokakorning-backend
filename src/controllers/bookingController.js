@@ -1,5 +1,6 @@
 const Booking = require('@models/Booking');
 const response = require('@responses/index');
+const Transaction = require('@models/Transaction');
 const { notify } = require('@services/notification');
 module.exports = {
   createBooking: async (req, res) => {
@@ -47,6 +48,17 @@ module.exports = {
       let data = await Booking.find({
         instructer: req.user.id,
         status: 'accepted',
+      }).populate('user');
+      return response.ok(res, data);
+    } catch (error) {
+      return response.error(res, error);
+    }
+  },
+  getcompletesession: async (req, res) => {
+    try {
+      let data = await Booking.find({
+        instructer: req.user.id,
+        status: 'complete',
       }).populate('user');
       return response.ok(res, data);
     } catch (error) {
@@ -103,6 +115,33 @@ module.exports = {
       return response.ok(res, {
         message: `Booking ${payload.status === 'cancel' ? 'Canceled' : 'Accepted'}`,
       });
+    } catch (error) {
+      return response.error(res, error);
+    }
+  },
+  finishbooking: async (req, res) => {
+    try {
+      const payload = req?.body || {};
+      if (!payload.id || !payload.status) {
+        return response.error(res, {
+          message: 'Booking id and status are required',
+        });
+      }
+      const data= await Booking.findByIdAndUpdate(payload?.id, { $set: { status: payload.status } });
+      await notify(
+          data?.user,
+          'Session Completed',
+          'Your session compleded successfully',
+        );
+        const obj ={
+          req_user: data?.instructer,
+              amount: Number(data?.total),
+              type:'EARN',
+              status:'Approved',
+        }
+        const txn = new Transaction(obj);
+               await txn.save();
+      return response.ok(res, {message: `Session finished`});
     } catch (error) {
       return response.error(res, error);
     }
