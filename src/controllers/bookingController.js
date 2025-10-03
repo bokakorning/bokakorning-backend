@@ -1,4 +1,5 @@
 const Booking = require('@models/Booking');
+const User = require('@models/User');
 const response = require('@responses/index');
 const Transaction = require('@models/Transaction');
 const { notify } = require('@services/notification');
@@ -95,6 +96,24 @@ module.exports = {
       return response.error(res, error);
     }
   },
+  getinstructersforschedulesession: async (req, res) => {
+      try {
+        let data = await Booking.findById(req?.params?.id)
+        const users = await User.find({
+            type: "instructer",
+            transmission: { $in: [data.transmission, "Both"] },
+            location: {
+              $near: {
+                $maxDistance: 1609.34 * 10,
+                $geometry: data.location,
+              },
+            },
+          }).select('-password');
+        return response.ok(res, users);
+      } catch (error) {
+        return response.error(res, error);
+      }
+    },
   updatebookingstatus: async (req, res) => {
     try {
       const payload = req?.body || {};
