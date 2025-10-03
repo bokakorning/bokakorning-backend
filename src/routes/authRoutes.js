@@ -48,7 +48,7 @@ router.post(
 // router.post("/fileupload", upload.single("file"), fileUpload);
 router.get(
   '/getUser',
-  authMiddleware(['user', 'admin', 'instructer']),
+  // authMiddleware(['user', 'admin', 'instructer']),
   getUser,
 );
 
