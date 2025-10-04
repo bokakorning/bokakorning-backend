@@ -24,30 +24,13 @@ router.post('/register', upload.single('doc'), register);
 router.post('/sendOTPForforgetpass', sendOTPForforgetpass);
 router.post('/verifyOTP', verifyOTP);
 router.post('/changePassword', changePassword);
-router.get(
-  '/profile',
-  authMiddleware(['user', 'admin', 'instructer']),
-  getprofile,
-);
-router.post(
-  '/updateprofile',
-  authMiddleware(['user', 'admin', 'instructer']),
+router.get('/profile',authMiddleware(['user', 'admin', 'instructer']),getprofile,);
+router.post('/updateprofile',authMiddleware(['user', 'admin', 'instructer']),
   upload.fields([
     { name: 'image', maxCount: 1 },
-    { name: 'doc', maxCount: 1 },
-  ]),
-  updateprofile,
-);
-router.post(
-  '/getnearbyinstructer',
-  authMiddleware(['user', 'admin', 'instructer']),
-  getnearbyinstructer,
-);
-router.post(
-  '/updateInstLocation',
-  authMiddleware(['user', 'admin', 'instructer']),
-  updateInstLocation,
-);
+    { name: 'doc', maxCount: 1 },]),updateprofile,);
+router.post('/getnearbyinstructer',authMiddleware(['user', 'admin', 'instructer']),getnearbyinstructer,);
+router.post('/updateInstLocation',authMiddleware(['user', 'admin', 'instructer']),updateInstLocation,);
 // router.post("/fileupload", upload.single("file"), fileUpload);
 router.get('/getUser',authMiddleware(['user', 'admin', 'instructer']),getUser);
 router.get('/getInstructersBalence',authMiddleware(['user', 'admin', 'instructer']),getInstructerBalence);
