@@ -77,7 +77,7 @@ bookingSchema.set('toJSON', {
     return ret;
   },
 });
-
+bookingSchema.index({ user_location: '2dsphere' });
 const Booking = mongoose.model('Booking', bookingSchema);
 
 module.exports = Booking;

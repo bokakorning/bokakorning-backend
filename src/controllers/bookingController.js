@@ -105,7 +105,7 @@ module.exports = {
             location: {
               $near: {
                 $maxDistance: 1609.34 * 10,
-                $geometry: data.location,
+                $geometry: data.user_location,
               },
             },
           }).select('-password');
@@ -143,6 +143,27 @@ module.exports = {
       }
       return response.ok(res, {
         message: `Booking ${payload.status === 'cancel' ? 'Canceled' : 'Accepted'}`,
+      });
+    } catch (error) {
+      return response.error(res, error);
+    }
+  },
+  assignInstructer: async (req, res) => {
+    try {
+      const payload = req?.body || {};
+      if (!payload.booking_id || !payload.instructer_id) {
+        return response.error(res, {
+          message: 'Booking id and Instructer id are required',
+        });
+      }
+      const data = await Booking.findByIdAndUpdate(payload.booking_id, { $set: { instructer: payload.instructer_id } });
+      await notify(
+          payload.instructer_id,
+          'New Request',
+          'You have a new session request',
+        );
+      return response.ok(res, {
+        message: `Instructer Assigned`,
       });
     } catch (error) {
       return response.error(res, error);
