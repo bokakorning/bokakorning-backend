@@ -317,7 +317,7 @@ module.exports = {
       }
      const data= await User.findByIdAndUpdate(inst_id, { $set: { wallet: 0 } });
       const obj ={
-                req_user: data?.instructer,
+                req_user: data?._id,
                     amount: Number(data?.wallet),
                     type:'WITHDRAWAL',
                     status:'Approved',
