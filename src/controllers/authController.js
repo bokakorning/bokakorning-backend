@@ -6,6 +6,7 @@ const Verification = require('@models/Verification');
 const mailNotification = require('@services/mailNotification');
 const userHelper = require('./../helper/user');
 const Device = require('@models/Device');
+const Transaction = require('@models/Transaction');
 
 module.exports = {
   register: async (req, res) => {
@@ -313,7 +314,20 @@ module.exports = {
       if (!inst_id) {
         return response.error(res, 'Instructer id is not provided');
       }
-      await User.findByIdAndUpdate(inst_id, { $set: { wallet: 0 } });
+     const data= await User.findByIdAndUpdate(inst_id, { $set: { wallet: 0 } });
+      const obj ={
+                req_user: data?.instructer,
+                    amount: Number(data?.wallet),
+                    type:'EARN',
+                    status:'WITHDRAWAL',
+              }
+              const txn = new Transaction(obj);
+                     await txn.save();
+                     await notify(
+          data?._id,
+          'Payout Successful',
+          'Funds from your wallet have been transferred to your bank account.',
+        );
       return response.ok(res);
     } catch (error) {
       return response.error(res, error);
