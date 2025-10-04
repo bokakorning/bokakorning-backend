@@ -12,7 +12,8 @@ const {
   updateInstLocation,
   getUser,
   updateInstRate,
-  getInstructerBalence
+  getInstructerBalence,
+  resetInstBalence
 } = require('@controllers/authController');
 const authMiddleware = require('@middlewares/authMiddleware');
 const { upload } = require('@services/fileUpload');
