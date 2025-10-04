@@ -109,6 +109,7 @@ module.exports = {
       let bookings = await Booking.find().sort({
           createdAt: -1,
         })
+        .populate('user instructer', '-password')
         .limit(limit * 1)
         .skip((page - 1) * limit);;
       return response.ok(res, bookings);
