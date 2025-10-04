@@ -7,6 +7,7 @@ const mailNotification = require('@services/mailNotification');
 const userHelper = require('./../helper/user');
 const Device = require('@models/Device');
 const Transaction = require('@models/Transaction');
+const { notify } = require('@services/notification');
 
 module.exports = {
   register: async (req, res) => {
