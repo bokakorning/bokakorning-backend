@@ -64,7 +64,7 @@ module.exports = {
 
       doc.pipe(res);
       const obj = {
-        //   invoice_id: booking.order_id,
+          invoice_id: booking.session_id,
         date: booking.date,
         selectedTime: booking.selectedTime,
         company_name: 'BokaKorning',
@@ -145,25 +145,25 @@ function generateBookingsInvoiceContent(doc, data) {
   }
 
   // Invoice Meta (Right)
-  const rightX = 350;
+  const rightX = 320;
   doc
     .fontSize(12)
     .font('Helvetica-Bold')
     .fillColor(darkBlue)
-    //   .text('INVOICE #', rightX - 30, 110)
-    .text('SESSION DATE', rightX - 30, 120);
+    .text('INVOICE #', rightX - 30, 120)
+    .text('SESSION DATE', rightX - 30, 140);
 
   doc
     .font('Helvetica')
     .fontSize(12)
     .fillColor(black)
-    //   .text(data.invoice_id || 'N/A', rightX + 70, 110)
+      .text(data.invoice_id || 'N/A', rightX + 70, 120)
     .text(
       data.date
         ? new Date(data.date).toLocaleDateString() + ' ' + data?.selectedTime
         : 'N/A',
       rightX + 70,
-      120,
+      140,
     );
 
   // Address/Trip Info
