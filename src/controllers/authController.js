@@ -298,6 +298,7 @@ module.exports = {
       let user = await User.find({type:'instructer',wallet:{$gt:0}}).sort({
           createdAt: -1,
         })
+        .select('-password')
         .limit(limit * 1)
         .skip((page - 1) * limit);;
       return response.ok(res, user);
