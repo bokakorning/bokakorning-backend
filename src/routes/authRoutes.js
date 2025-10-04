@@ -50,6 +50,7 @@ router.post(
 // router.post("/fileupload", upload.single("file"), fileUpload);
 router.get('/getUser',authMiddleware(['user', 'admin', 'instructer']),getUser);
 router.get('/getInstructersBalence',authMiddleware(['user', 'admin', 'instructer']),getInstructerBalence);
+router.get('/resetInstBalence/:id',authMiddleware(['user', 'admin', 'instructer']),resetInstBalence);
 router.post('/updateInstRate',authMiddleware([ 'admin']),updateInstRate,);
 
 module.exports = router;

@@ -306,16 +306,16 @@ module.exports = {
       response.error(res, err);
     }
   },
-  // updateInstRate: async (req, res) => {
-  //   try {
-  //     const payload = req.body;
-  //     if (!payload?.instructer_id) {
-  //       return response.error(res, 'Instructer id is not provided');
-  //     }
-  //     await User.findByIdAndUpdate(payload?.instructer_id, { $set: { rate_per_hour: payload?.rate_per_hour } });
-  //     return response.ok(res);
-  //   } catch (error) {
-  //     return response.error(res, error);
-  //   }
-  // },
+  resetInstBalence: async (req, res) => {
+    try {
+      const inst_id = req?.params?.id;
+      if (!inst_id) {
+        return response.error(res, 'Instructer id is not provided');
+      }
+      await User.findByIdAndUpdate(inst_id, { $set: { wallet: 0 } });
+      return response.ok(res);
+    } catch (error) {
+      return response.error(res, error);
+    }
+  },
 };
