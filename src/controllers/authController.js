@@ -318,8 +318,8 @@ module.exports = {
       const obj ={
                 req_user: data?.instructer,
                     amount: Number(data?.wallet),
-                    type:'EARN',
-                    status:'WITHDRAWAL',
+                    type:'WITHDRAWAL',
+                    status:'Approved',
               }
               const txn = new Transaction(obj);
                      await txn.save();
