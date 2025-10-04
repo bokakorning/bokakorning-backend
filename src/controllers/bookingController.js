@@ -7,6 +7,13 @@ module.exports = {
   createBooking: async (req, res) => {
     try {
       const payload = req?.body || {};
+      const now = new Date();
+      const date = now
+        .toISOString()
+        .replace(/[-T:.Z]/g, "")
+        .slice(0, 17); // YYYYMMDDHHMMSSmmm
+
+      payload.session_id = `BKS-${date}`;
       payload.user = req.user.id;
       let data = new Booking(payload);
       await data.save();
@@ -94,6 +101,20 @@ module.exports = {
       return response.ok(res, data);
     } catch (error) {
       return response.error(res, error);
+    }
+  },
+  getAllBookings: async (req, res) => {
+    try {
+      const { page = 1, limit = 20, } = req.query;
+      let bookings = await Booking.find().sort({
+          createdAt: -1,
+        })
+        .limit(limit * 1)
+        .skip((page - 1) * limit);;
+      return response.ok(res, bookings);
+    } catch (err) {
+      console.log(err);
+      response.error(res, err);
     }
   },
   getinstructersforschedulesession: async (req, res) => {

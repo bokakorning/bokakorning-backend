@@ -9,6 +9,7 @@ router.post('/reBooking',authMiddleware(['user', 'admin', 'instructer']),booking
 router.get('/getinstructerreqs',authMiddleware(['admin', 'instructer']),booking.getinstructerreqs,);
 router.get('/getschedulebookings',booking.getschedulebookings,);
 router.get('/getinstructers/:id',booking.getinstructersforschedulesession,);
+router.get('/getAllBookings',booking.getAllBookings,);
 router.post('/assignInstructer',booking.assignInstructer,);
 router.get('/getaccinstructerreqs',authMiddleware(['admin', 'instructer']),booking.getaccinstructerreqs,);
 router.get('/getcompletesession',authMiddleware(['admin', 'instructer']),booking.getcompletesession,);

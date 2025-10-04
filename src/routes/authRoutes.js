@@ -11,7 +11,8 @@ const {
   getnearbyinstructer,
   updateInstLocation,
   getUser,
-  updateInstRate
+  updateInstRate,
+  getInstructerBalence
 } = require('@controllers/authController');
 const authMiddleware = require('@middlewares/authMiddleware');
 const { upload } = require('@services/fileUpload');
@@ -47,15 +48,8 @@ router.post(
   updateInstLocation,
 );
 // router.post("/fileupload", upload.single("file"), fileUpload);
-router.get(
-  '/getUser',
-  authMiddleware(['user', 'admin', 'instructer']),
-  getUser,
-);
-router.post(
-  '/updateInstRate',
-  authMiddleware([ 'admin']),
-  updateInstRate,
-);
+router.get('/getUser',authMiddleware(['user', 'admin', 'instructer']),getUser);
+router.get('/getInstructersBalence',authMiddleware(['user', 'admin', 'instructer']),getInstructerBalence);
+router.post('/updateInstRate',authMiddleware([ 'admin']),updateInstRate,);
 
 module.exports = router;

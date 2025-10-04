@@ -13,6 +13,9 @@ const pointSchema = new mongoose.Schema({
 });
 const bookingSchema = new mongoose.Schema(
   {
+    session_id: {
+      type: String,
+    },
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
