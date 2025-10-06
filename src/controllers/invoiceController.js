@@ -65,7 +65,7 @@ module.exports = {
       doc.pipe(res);
       const obj = {
           invoice_id: booking.session_id,
-        date: booking.date,
+        date: booking?.sheduleSeesion?booking?.sheduleDate:booking.date,
         selectedTime: booking.selectedTime,
         company_name: 'BokaKorning',
         company_address: '123 Boka Street',

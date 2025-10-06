@@ -1,7 +1,7 @@
 const nodemailer = require('nodemailer');
 var moment = require('moment');
 
-const comapny = 'QuizzApp';
+const comapny = 'BokaKorning';
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -43,6 +43,22 @@ module.exports = {
     try {
       const html = `<div><p>Your Registration OTP</p> <p> Your OTP for registration: ${code}.</p><p> Please use this code to complete your registration.</p><p>Regards,</p><p><b>${comapny}<\/b></p></div>`;
       return await sendMail(email, 'Your Registration OTP', html);
+    } catch (err) {
+      console.log(err);
+      throw new Error('[sendOTPmail]Could not send OTP mail');
+    }
+  },
+  sendOTPmailForForgetPasword: async ({ email, code }) => {
+    try {
+      const html = `<div>
+    <p><b>Password Reset OTP</b></p>
+    <p>Your OTP to reset your password is: <b>${code}</b>.</p>
+    <p>This code is valid for <b>5 minutes</b>. Please use it to complete your password reset.</p>
+    <p>If you didn’t request a password reset, please ignore this email.</p>
+    <p>Regards,</p>
+    <p><b>${comapny}</b></p>
+  </div>`;
+  return await sendMail(email, 'Password Reset OTP', html);
     } catch (err) {
       console.log(err);
       throw new Error('[sendOTPmail]Could not send OTP mail');

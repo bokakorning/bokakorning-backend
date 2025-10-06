@@ -103,12 +103,12 @@ module.exports = {
         return response.badReq(res, { message: 'Email does not exist.' });
       }
 
-      // let ran_otp = Math.floor(1000 + Math.random() * 9000);
-      let ran_otp = '0000';
-      // await mailNotification.sendOTPmailForSignup({
-      //   email: email,
-      //   code: ran_otp,
-      // });
+      let ran_otp = Math.floor(1000 + Math.random() * 9000);
+      // let ran_otp = '0000';
+      await mailNotification.sendOTPmailForForgetPasword({
+        email: email,
+        code: ran_otp,
+      });
       let ver = new Verification({
         user: user._id,
         otp: ran_otp,
@@ -172,7 +172,7 @@ module.exports = {
       await Verification.findByIdAndDelete(verID);
       user.password = user.encryptPassword(password);
       await user.save();
-      //mailNotification.passwordChange({ email: user.email });
+      // mailNotification.passwordChange({ email: user.email });
       return response.ok(res, { message: 'Password changed! Login now.' });
     } catch (error) {
       return response.error(res, error);
