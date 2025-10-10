@@ -56,7 +56,7 @@ module.exports = {
       let data = await Booking.find({
         instructer: req.user.id,
         status: 'accepted',
-      }).populate('user');
+      }).sort({ createdAt: -1 }).populate('user');
       return response.ok(res, data);
     } catch (error) {
       return response.error(res, error);
@@ -178,7 +178,8 @@ module.exports = {
           message: 'Booking id and Instructer id are required',
         });
       }
-      const data = await Booking.findByIdAndUpdate(payload.booking_id, { $set: { instructer: payload.instructer_id } });
+      const users = await User.findById(payload.instructer_id)
+       await Booking.findByIdAndUpdate(payload.booking_id, { $set: { instructer: payload.instructer_id,total:users.rate_per_hour } });
       await notify(
           payload.instructer_id,
           'New Request',
@@ -205,6 +206,7 @@ module.exports = {
           'Session Completed',
           'Your session compleded successfully',
         );
+         await User.findByIdAndUpdate(req.user.id, { $inc: { wallet: Number(data?.total) } });
         const obj ={
           req_user: data?.instructer,
               amount: Number(data?.total),
