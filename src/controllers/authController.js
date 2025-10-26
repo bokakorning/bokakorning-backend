@@ -1,4 +1,5 @@
 const User = require('@models/User');
+const Module = require('@models/Module');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const response = require('@responses/index');
@@ -40,8 +41,11 @@ module.exports = {
         userobj.doc = doc;
       }
       const newUser = new User(userobj);
-
       await newUser.save();
+      if (type==='user') {
+  const newModule = new Module({student:newUser?._id});
+  await newModule.save()
+}
 
       const userResponse = await User.findById(newUser._id).select('-password');
 
