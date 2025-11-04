@@ -45,7 +45,7 @@ module.exports = {
         rejectedbyinstructer: { $nin: [req.user.id] },
       })
         .sort({ createdAt: -1 })
-        .populate('user');
+        .populate('user', '-password');
       return response.ok(res, data);
     } catch (error) {
       return response.error(res, error);
@@ -56,7 +56,7 @@ module.exports = {
       let data = await Booking.find({
         instructer: req.user.id,
         status: 'accepted',
-      }).sort({ createdAt: -1 }).populate('user');
+      }).sort({ createdAt: -1 }).populate('user', '-password');
       return response.ok(res, data);
     } catch (error) {
       return response.error(res, error);
@@ -67,7 +67,7 @@ module.exports = {
       let data = await Booking.find({
         instructer: req.user.id,
         status: 'complete',
-      }).populate('user');
+      }).populate('user', '-password');
       return response.ok(res, data);
     } catch (error) {
       return response.error(res, error);

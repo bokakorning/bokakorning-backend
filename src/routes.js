@@ -4,6 +4,7 @@ const notificationRoutes = require('@routes/notificationRoutes');
 const contentRoutes = require('@routes/contentManagementRoutes');
 const transactionRoutes = require('@routes/transactionRoutes');
 const progressRoutes = require('@routes/moduleRoutes');
+// const paymentRoutes = require('@routes/paymentRoutes');
 
 module.exports = (app) => {
   app.use('/auth', authRoutes);
@@ -12,4 +13,5 @@ module.exports = (app) => {
   app.use('/transaction', transactionRoutes);
   app.use('/content', contentRoutes);
   app.use('/progress', progressRoutes);
+  // app.use('/payment', paymentRoutes);
 };
