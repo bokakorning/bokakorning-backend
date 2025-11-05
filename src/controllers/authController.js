@@ -204,6 +204,7 @@ module.exports = {
       //       },
       //     },
       //   }).select('-password');
+      
       const users = await User.aggregate([
         {
           $geoNear: {
