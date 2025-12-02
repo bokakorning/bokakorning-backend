@@ -95,9 +95,12 @@ module.exports = {
   },
   getschedulebookings: async (req, res) => {
     try {
+      const { page = 1, limit = 20, } = req.query;
       let data = await Booking.find({sheduleSeesion:true,instructer:{ $exists: false }})
         .sort({ createdAt: -1 })
-        .populate('user', '-password');
+        .populate('user', '-password')
+        .limit(limit * 1)
+        .skip((page - 1) * limit);
       return response.ok(res, data);
     } catch (error) {
       return response.error(res, error);
@@ -111,7 +114,7 @@ module.exports = {
         })
         .populate('user instructer', '-password')
         .limit(limit * 1)
-        .skip((page - 1) * limit);;
+        .skip((page - 1) * limit);
       return response.ok(res, bookings);
     } catch (err) {
       console.log(err);
