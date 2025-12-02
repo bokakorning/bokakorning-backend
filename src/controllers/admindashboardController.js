@@ -28,7 +28,7 @@ module.exports = {
   lastweekbookings: async (req, res) => {
     try {
       const sevenDaysAgo = new Date();
-      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6); // includes today
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6); // includes today
 
       const last7DaysBookings = await Booking.aggregate([
         {
