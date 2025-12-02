@@ -10,7 +10,7 @@ module.exports = {
       const now = new Date();
       const date = now
         .toISOString()
-        .replace(/[-T:.Z]/g, "")
+        .replace(/[-T:.Z]/g, '')
         .slice(0, 17); // YYYYMMDDHHMMSSmmm
 
       payload.session_id = `BKS-${date}`;
@@ -56,7 +56,9 @@ module.exports = {
       let data = await Booking.find({
         instructer: req.user.id,
         status: 'accepted',
-      }).sort({ createdAt: -1 }).populate('user', '-password');
+      })
+        .sort({ createdAt: -1 })
+        .populate('user', '-password');
       return response.ok(res, data);
     } catch (error) {
       return response.error(res, error);
@@ -95,8 +97,11 @@ module.exports = {
   },
   getschedulebookings: async (req, res) => {
     try {
-      const { page = 1, limit = 20, } = req.query;
-      let data = await Booking.find({sheduleSeesion:true,instructer:{ $exists: false }})
+      const { page = 1, limit = 20 } = req.query;
+      let data = await Booking.find({
+        sheduleSeesion: true,
+        instructer: { $exists: false },
+      })
         .sort({ createdAt: -1 })
         .populate('user', '-password')
         .limit(limit * 1)
@@ -107,38 +112,55 @@ module.exports = {
     }
   },
   getAllBookings: async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 20;
+    const skip = (page - 1) * limit;
+
+    // Total count
+    const totalUsers = await Booking.countDocuments();
+
+    // Paginated data
+    const bookings = await Booking.find()
+      .sort({ createdAt: -1 })
+      .populate("user instructer", "-password")
+      .limit(limit)
+      .skip(skip);
+
+    const totalPages = Math.ceil(totalUsers / limit);
+
+    return response.ok(res, {
+      data: bookings,
+      totalUsers: totalUsers,
+      totalPages: totalPages,
+      currentPage: page,
+      itemsPerPage: limit,
+    });
+  } catch (err) {
+    console.log(err);
+    response.error(res, err);
+  }
+}
+,
+
+  getinstructersforschedulesession: async (req, res) => {
     try {
-      const { page = 1, limit = 20, } = req.query;
-      let bookings = await Booking.find().sort({
-          createdAt: -1,
-        })
-        .populate('user instructer', '-password')
-        .limit(limit * 1)
-        .skip((page - 1) * limit);
-      return response.ok(res, bookings);
-    } catch (err) {
-      console.log(err);
-      response.error(res, err);
+      let data = await Booking.findById(req?.params?.id);
+      const users = await User.find({
+        type: 'instructer',
+        transmission: { $in: [data.transmission, 'Both'] },
+        location: {
+          $near: {
+            $maxDistance: 1609.34 * 10,
+            $geometry: data.user_location,
+          },
+        },
+      }).select('-password');
+      return response.ok(res, users);
+    } catch (error) {
+      return response.error(res, error);
     }
   },
-  getinstructersforschedulesession: async (req, res) => {
-      try {
-        let data = await Booking.findById(req?.params?.id)
-        const users = await User.find({
-            type: "instructer",
-            transmission: { $in: [data.transmission, "Both"] },
-            location: {
-              $near: {
-                $maxDistance: 1609.34 * 10,
-                $geometry: data.user_location,
-              },
-            },
-          }).select('-password');
-        return response.ok(res, users);
-      } catch (error) {
-        return response.error(res, error);
-      }
-    },
   updatebookingstatus: async (req, res) => {
     try {
       const payload = req?.body || {};
@@ -181,13 +203,15 @@ module.exports = {
           message: 'Booking id and Instructer id are required',
         });
       }
-      const users = await User.findById(payload.instructer_id)
-       await Booking.findByIdAndUpdate(payload.booking_id, { $set: { instructer: payload.instructer_id,total:users.rate_per_hour } });
+      const users = await User.findById(payload.instructer_id);
+      await Booking.findByIdAndUpdate(payload.booking_id, {
+        $set: { instructer: payload.instructer_id, total: users.rate_per_hour },
+      });
       await notify(
-          payload.instructer_id,
-          'New Request',
-          'You have a new session request',
-        );
+        payload.instructer_id,
+        'New Request',
+        'You have a new session request',
+      );
       return response.ok(res, {
         message: `Instructer Assigned`,
       });
@@ -203,22 +227,26 @@ module.exports = {
           message: 'Booking id and status are required',
         });
       }
-      const data= await Booking.findByIdAndUpdate(payload?.id, { $set: { status: payload.status } });
+      const data = await Booking.findByIdAndUpdate(payload?.id, {
+        $set: { status: payload.status },
+      });
       await notify(
-          data?.user,
-          'Session Completed',
-          'Your session compleded successfully',
-        );
-         await User.findByIdAndUpdate(req.user.id, { $inc: { wallet: Number(data?.total) } });
-        const obj ={
-          req_user: data?.instructer,
-              amount: Number(data?.total),
-              type:'EARN',
-              status:'Approved',
-        }
-        const txn = new Transaction(obj);
-               await txn.save();
-      return response.ok(res, {message: `Session finished`});
+        data?.user,
+        'Session Completed',
+        'Your session compleded successfully',
+      );
+      await User.findByIdAndUpdate(req.user.id, {
+        $inc: { wallet: Number(data?.total) },
+      });
+      const obj = {
+        req_user: data?.instructer,
+        amount: Number(data?.total),
+        type: 'EARN',
+        status: 'Approved',
+      };
+      const txn = new Transaction(obj);
+      await txn.save();
+      return response.ok(res, { message: `Session finished` });
     } catch (error) {
       return response.error(res, error);
     }

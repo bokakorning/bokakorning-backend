@@ -28,53 +28,53 @@ module.exports = {
   lastweekbookings: async (req, res) => {
     try {
       const sevenDaysAgo = new Date();
-  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6); // includes today
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6); // includes today
 
-  const last7DaysBookings = await Booking.aggregate([
-    {
-      $match: {
-        createdAt: { $gte: new Date(sevenDaysAgo.setHours(0, 0, 0, 0)) }
-      }
-    },
-    {
-      $group: {
-        _id: {
-          $dateToString: { format: "%Y-%m-%d", date: "$createdAt" }
+      const last7DaysBookings = await Booking.aggregate([
+        {
+          $match: {
+            createdAt: { $gte: new Date(sevenDaysAgo.setHours(0, 0, 0, 0)) },
+          },
         },
-        total: { $sum: 1 }
-      }
-    },
-    { $sort: { _id: 1 } } // sort by date ascending
-  ]);
+        {
+          $group: {
+            _id: {
+              $dateToString: { format: '%Y-%m-%d', date: '$createdAt' },
+            },
+            total: { $sum: 1 },
+          },
+        },
+        { $sort: { _id: 1 } }, // sort by date ascending
+      ]);
       return response.ok(res, last7DaysBookings);
     } catch (err) {
       console.log(err);
       response.error(res, err);
     }
   },
+  
   lastweekusers: async (req, res) => {
     try {
       const sevenDaysAgo = new Date();
-  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6); // includes today
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6); // includes today
 
-
-  const last7DaysUsers = await User.aggregate([
-    {
-      $match: {
-        createdAt: { $gte: new Date(sevenDaysAgo.setHours(0, 0, 0, 0)) },
-        type:req.query.type
-      }
-    },
-    {
-      $group: {
-        _id: {
-          $dateToString: { format: "%Y-%m-%d", date: "$createdAt" }
+      const last7DaysUsers = await User.aggregate([
+        {
+          $match: {
+            createdAt: { $gte: new Date(sevenDaysAgo.setHours(0, 0, 0, 0)) },
+            type: req.query.type,
+          },
         },
-        total: { $sum: 1 }
-      }
-    },
-    { $sort: { _id: 1 } } // sort by date ascending
-  ]);
+        {
+          $group: {
+            _id: {
+              $dateToString: { format: '%Y-%m-%d', date: '$createdAt' },
+            },
+            total: { $sum: 1 },
+          },
+        },
+        { $sort: { _id: 1 } }, // sort by date ascending
+      ]);
       return response.ok(res, last7DaysUsers);
     } catch (err) {
       console.log(err);
