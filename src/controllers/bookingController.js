@@ -79,7 +79,7 @@ module.exports = {
     try {
       let cond = {
         user: req.user.id,
-        status: 'pending',
+        status: { $in: ['pending', 'accepted'] },
       };
       if (
         req?.query?.status === 'cancel' ||
