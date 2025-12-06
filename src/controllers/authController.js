@@ -42,10 +42,10 @@ module.exports = {
       }
       const newUser = new User(userobj);
       await newUser.save();
-      if (type==='user') {
-  const newModule = new Module({student:newUser?._id});
-  await newModule.save()
-}
+      if (type === 'user') {
+        const newModule = new Module({ student: newUser?._id });
+        await newModule.save();
+      }
 
       const userResponse = await User.findById(newUser._id).select('-password');
 
@@ -69,6 +69,8 @@ module.exports = {
       }
 
       const user = await User.findOne({ email });
+      console.log(user);
+
       if (!user) {
         return res.status(401).json({ message: 'Invalid credentials' });
       }
@@ -204,7 +206,7 @@ module.exports = {
       //       },
       //     },
       //   }).select('-password');
-      
+
       const users = await User.aggregate([
         {
           $geoNear: {
@@ -267,7 +269,9 @@ module.exports = {
       if (!payload?.instructer_id) {
         return response.error(res, 'Instructer id is not provided');
       }
-      await User.findByIdAndUpdate(payload?.instructer_id, { $set: { rate_per_hour: payload?.rate_per_hour } });
+      await User.findByIdAndUpdate(payload?.instructer_id, {
+        $set: { rate_per_hour: payload?.rate_per_hour },
+      });
       return response.ok(res);
     } catch (error) {
       return response.error(res, error);
@@ -287,27 +291,44 @@ module.exports = {
   },
   getUser: async (req, res) => {
     try {
-      const { page = 1, limit = 20,type } = req.query;
-      let user = await User.find({type:type}).sort({
-          createdAt: -1,
-        })
-        .limit(limit * 1)
-        .skip((page - 1) * limit);;
-      return response.ok(res, user);
+      let { page = 1, limit = 20, type } = req.query;
+
+      page = parseInt(page);
+      limit = parseInt(limit);
+      const totalUsers = await User.countDocuments({ type: type });
+
+      const users = await User.find({ type: type })
+        .sort({ createdAt: -1 })
+        .limit(limit)
+        .skip((page - 1) * limit);
+
+      const totalPages = Math.ceil(totalUsers / limit);
+
+      return response.ok(res, {
+        users,
+        pagination: {
+          totalUsers,
+          totalPages,
+          currentPage: page,
+          itemsPerPage: limit,
+        },
+      });
     } catch (err) {
       console.log(err);
       response.error(res, err);
     }
   },
+
   getInstructerBalence: async (req, res) => {
     try {
-      const { page = 1, limit = 20,type } = req.query;
-      let user = await User.find({type:'instructer',wallet:{$gt:0}}).sort({
+      const { page = 1, limit = 20, type } = req.query;
+      let user = await User.find({ type: 'instructer', wallet: { $gt: 0 } })
+        .sort({
           createdAt: -1,
         })
         .select('-password')
         .limit(limit * 1)
-        .skip((page - 1) * limit);;
+        .skip((page - 1) * limit);
       return response.ok(res, user);
     } catch (err) {
       console.log(err);
@@ -320,20 +341,22 @@ module.exports = {
       if (!inst_id) {
         return response.error(res, 'Instructer id is not provided');
       }
-     const data= await User.findByIdAndUpdate(inst_id, { $set: { wallet: 0 } });
-      const obj ={
-                req_user: data?._id,
-                    amount: Number(data?.wallet),
-                    type:'WITHDRAWAL',
-                    status:'Approved',
-              }
-              const txn = new Transaction(obj);
-                     await txn.save();
-                     await notify(
-          data?._id,
-          'Payout Successful',
-          'Funds from your wallet have been transferred to your bank account.',
-        );
+      const data = await User.findByIdAndUpdate(inst_id, {
+        $set: { wallet: 0 },
+      });
+      const obj = {
+        req_user: data?._id,
+        amount: Number(data?.wallet),
+        type: 'WITHDRAWAL',
+        status: 'Approved',
+      };
+      const txn = new Transaction(obj);
+      await txn.save();
+      await notify(
+        data?._id,
+        'Payout Successful',
+        'Funds from your wallet have been transferred to your bank account.',
+      );
       return response.ok(res);
     } catch (error) {
       return response.error(res, error);
