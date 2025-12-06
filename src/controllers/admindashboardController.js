@@ -9,7 +9,7 @@ module.exports = {
         await Promise.all([
           User.countDocuments({ type: 'user' }),
           User.countDocuments({ type: 'instructer' }),
-          Booking.countDocuments({ status: 'started' }),
+          Booking.countDocuments({ status: 'accepted' }),
           Booking.countDocuments({ status: 'cancel' }),
           Booking.countDocuments({ status: 'complete' }),
         ]);
