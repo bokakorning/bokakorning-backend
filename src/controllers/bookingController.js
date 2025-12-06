@@ -14,7 +14,7 @@ module.exports = {
         .slice(0, 17); // YYYYMMDDHHMMSSmmm
 
       payload.session_id = `BKS-${date}`;
-      payload.user = req.user.id;
+      payload.user = req.body.user || req.user.id;
       let data = new Booking(payload);
       await data.save();
       await notify(
@@ -112,37 +112,35 @@ module.exports = {
     }
   },
   getAllBookings: async (req, res) => {
-  try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 20;
-    const skip = (page - 1) * limit;
+    try {
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 20;
+      const skip = (page - 1) * limit;
 
-    // Total count
-    const totalUsers = await Booking.countDocuments();
+      // Total count
+      const totalUsers = await Booking.countDocuments();
 
-    // Paginated data
-    const bookings = await Booking.find()
-      .sort({ createdAt: -1 })
-      .populate("user instructer", "-password")
-      .limit(limit)
-      .skip(skip);
+      // Paginated data
+      const bookings = await Booking.find()
+        .sort({ createdAt: -1 })
+        .populate('user instructer', '-password')
+        .limit(limit)
+        .skip(skip);
 
-    const totalPages = Math.ceil(totalUsers / limit);
+      const totalPages = Math.ceil(totalUsers / limit);
 
-    return response.ok(res, {
-      data: bookings,
-      totalUsers: totalUsers,
-      totalPages: totalPages,
-      currentPage: page,
-      itemsPerPage: limit,
-    });
-  } catch (err) {
-    console.log(err);
-    response.error(res, err);
-  }
-}
-,
-
+      return response.ok(res, {
+        data: bookings,
+        totalUsers: totalUsers,
+        totalPages: totalPages,
+        currentPage: page,
+        itemsPerPage: limit,
+      });
+    } catch (err) {
+      console.log(err);
+      response.error(res, err);
+    }
+  },
   getinstructersforschedulesession: async (req, res) => {
     try {
       let data = await Booking.findById(req?.params?.id);
@@ -161,6 +159,7 @@ module.exports = {
       return response.error(res, error);
     }
   },
+
   updatebookingstatus: async (req, res) => {
     try {
       const payload = req?.body || {};
@@ -277,6 +276,24 @@ module.exports = {
         data,
         message: 'Instructer Book successfully',
       });
+    } catch (error) {
+      return response.error(res, error);
+    }
+  },
+  getAllInstructers: async (req, res) => {
+    try {
+      const { user_location, transmission } = req.body;
+      const users = await User.find({
+        type: 'instructer',
+        transmission: { $in: [transmission, 'Both'] },
+        location: {
+          $near: {
+            $maxDistance: 1609.34 * 10,
+            $geometry: user_location,
+          },
+        },
+      }).select('-password');
+      return response.ok(res, users);
     } catch (error) {
       return response.error(res, error);
     }
