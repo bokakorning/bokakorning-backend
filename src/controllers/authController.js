@@ -321,20 +321,33 @@ module.exports = {
 
   getInstructerBalence: async (req, res) => {
     try {
-      const { page = 1, limit = 20, type } = req.query;
-      let user = await User.find({ type: 'instructer', wallet: { $gt: 0 } })
-        .sort({
-          createdAt: -1,
-        })
+      const { page = 1, limit = 20 } = req.query;
+      const filters = {
+        type: 'instructer',
+        wallet: { $gt: 0 },
+      };
+      const totalItems = await User.countDocuments(filters);
+      const users = await User.find(filters)
+        .sort({ createdAt: -1 })
         .select('-password')
         .limit(limit * 1)
         .skip((page - 1) * limit);
-      return response.ok(res, user);
+
+      return response.ok(res, {
+        users,
+        pagination: {
+          totalItems,
+          totalPages: Math.ceil(totalItems / limit),
+          currentPage: Number(page),
+          itemsPerPage: Number(limit),
+        },
+      });
     } catch (err) {
       console.log(err);
-      response.error(res, err);
+      return response.error(res, err);
     }
   },
+
   resetInstBalence: async (req, res) => {
     try {
       const inst_id = req?.params?.id;

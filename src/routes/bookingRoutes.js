@@ -50,5 +50,5 @@ router.put(
 );
 //////Invoice
 router.get('/generateInvoice', invoice.generateBookingsInvoice);
-router.get('/getAllInstructers', booking.getAllInstructers);
+router.post('/getAllInstructers', booking.getAllInstructers);
 module.exports = router;
