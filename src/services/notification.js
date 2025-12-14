@@ -27,7 +27,7 @@ async function sendNotification(content, player_ids, title) {
       en: content,
     };
      // if (notifictone) {
-      // notification.ios_sound=`${notifictone}.wav`;
+      notification.ios_sound=`custom.wav`;
       // notification.android_sound='ordersreceived';
       notification.android_channel_id='13b233fc-dff1-48f6-8a49-6d111f0bfc77';
     // }
