@@ -3,6 +3,7 @@ const User = require('@models/User');
 const response = require('@responses/index');
 const Transaction = require('@models/Transaction');
 module.exports = {
+  
   totalnumberdata: async (req, res) => {
     try {
       const [user, instructer, activebooking, cancelbooking, completebooking] =
@@ -25,6 +26,8 @@ module.exports = {
       response.error(res, err);
     }
   },
+
+
   lastweekbookings: async (req, res) => {
     try {
       const sevenDaysAgo = new Date();

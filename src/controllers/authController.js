@@ -42,6 +42,7 @@ module.exports = {
       }
       const newUser = new User(userobj);
       await newUser.save();
+
       if (type === 'user') {
         const newModule = new Module({ student: newUser?._id });
         await newModule.save();
@@ -58,6 +59,7 @@ module.exports = {
       res.status(500).json({ message: 'Server error' });
     }
   },
+
   login: async (req, res) => {
     try {
       const { email, password } = req.body;
@@ -193,6 +195,7 @@ module.exports = {
       return response.error(res, error);
     }
   },
+
   getnearbyinstructer: async (req, res) => {
     try {
       const payload = req.body;
@@ -206,7 +209,7 @@ module.exports = {
       //       },
       //     },
       //   }).select('-password');
-      
+
       const users = await User.aggregate([
         {
           $geoNear: {
@@ -235,7 +238,7 @@ module.exports = {
   updateprofile: async (req, res) => {
     try {
       const payload = req.body;
-      // console.log("req",req?.files)
+
       if (req.files && req.files?.image?.length > 0) {
         payload.image = req.files?.image?.[0].location;
       }
@@ -251,6 +254,7 @@ module.exports = {
       return response.error(res, error);
     }
   },
+
   updateInstLocation: async (req, res) => {
     try {
       const track = req.body?.track;
@@ -373,6 +377,51 @@ module.exports = {
       return response.ok(res);
     } catch (error) {
       return response.error(res, error);
+    }
+  },
+
+  registerInstructer: async (req, res) => {
+    try {
+      const payload = req.body;
+      const { password, email } = payload;
+
+      if (!password || password.length < 8) {
+        return res
+          .status(400)
+          .json({ message: 'Password must be at least 8 characters long' });
+      }
+
+      const existingUser = await User.findOne({ email });
+      if (existingUser) {
+        return res.status(400).json({ message: 'User already exists' });
+      }
+
+      const hashedPassword = await bcrypt.hash(password, 10);
+      
+      if (payload.location && typeof payload.location === 'string') {
+        payload.location = JSON.parse(payload.location);
+      }
+      const userObj = {
+        ...payload,
+        password: hashedPassword,
+      };
+
+      if (req.file) {
+        userObj.image = req.file.location; // or image
+      }
+
+      const newUser = new User(userObj);
+      await newUser.save();
+
+      const userResponse = await User.findById(newUser._id).select('-password');
+
+      return res.status(201).json({
+        message: 'Instructor registered successfully',
+        user: userResponse,
+      });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ message: 'Server error' });
     }
   },
 };
