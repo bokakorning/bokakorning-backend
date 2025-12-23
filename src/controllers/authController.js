@@ -112,6 +112,7 @@ module.exports = {
       }
 
       let ran_otp = Math.floor(1000 + Math.random() * 9000);
+      
       // let ran_otp = '0000';
       await mailNotification.sendOTPmailForForgetPasword({
         email: email,
