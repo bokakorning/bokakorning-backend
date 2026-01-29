@@ -3,11 +3,22 @@
 const mongoose = require('mongoose');
 
 const contentSchema = new mongoose.Schema({
-  termsAndConditions: {
+  type: {
+    type: String,
+    enum: ['privacyPolicy', 'termsAndConditions'],
+    required: true,
+  },
+  name: {
     type: String,
   },
-  privacy: {
+  language: {
     type: String,
+    enum: ['en', 'sv'],
+    required: true,
+  },
+  content: {
+    type: String,
+    required: true,
   },
 });
 
