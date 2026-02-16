@@ -48,7 +48,15 @@ const bookingSchema = new mongoose.Schema(
       default: 'pending',
       // enum:['pending','started','cancel','complete']
     },
+    payment_status: {
+      type: String,
+      default: 'pending',
+      // enum:['pending','paid','failed']
+    },
     paymentid: {
+      type: String,
+    },
+    token: {
       type: String,
     },
     payment_mode: {

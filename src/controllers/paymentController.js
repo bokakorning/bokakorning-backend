@@ -1,20 +1,24 @@
-import axios from 'axios';
-import fs from 'fs';
-import https from 'https';
-import { v4 as uuidv4 } from 'uuid';
 const response = require('../responses');
+const Booking = require('@models/Booking');
+const Payment = require('@models/Payment');
+const axios = require('axios');
+const fs = require('fs');
+const https = require('https');
+const { v4: uuidv4 } = require('uuid');
+const path = require('path');
+const { log } = require('console');
+const { console } = require('inspector');
 
 const httpsAgent = new https.Agent({
-  cert: fs.readFileSync('./certs/client.pem'),
-  key: fs.readFileSync('./certs/client.key'),
-  ca: fs.readFileSync('./certs/root.pem'),
+  cert: fs.readFileSync(path.join(__dirname, '../../certs/client.pem')),
+  key: fs.readFileSync(path.join(__dirname, '../../certs/client.key')),
+  ca: fs.readFileSync(path.join(__dirname, '../../certs/root.pem')),
 });
-
 const client = axios.create({ httpsAgent });
-
 module.exports = {
   createPaymentRequest: async (req, res) => {
     const { amount, message } = req.body;
+    console.log('Creating payment request with amount:', req.body);
     const instructionUUID = uuidv4();
 
     const data = {
@@ -22,25 +26,37 @@ module.exports = {
       currency: 'SEK',
       amount,
       message,
-      callbackUrl: 'https://your-domain.com/api/swish/callback',
+      callbackUrl: 'https://api.bokakorning.online/payment/api/swish/callback',
       callbackIdentifier: 'MY_MERCHANT_APP',
     };
-
     try {
-      const swishRes = await client.put(
-        `https://mss.cpc.getswish.net/swish-cpcapi/api/v2/paymentrequests/${instructionUUID}`,
+      const SWISH_BASE_URL =
+        process.env.SWISH_ENV === 'production'
+          ? 'https://cpc.getswish.net'
+          : 'https://staging.getswish.pub.tds.tieto.com';
+      
+      const swishRes = await client.post(
+        `${SWISH_BASE_URL}/cpc-swish/api/v1/paymentrequests`,
         data
       );
-
-      if (swishRes.status === 201) {
-        const paymentRequestToken = swishRes.headers.paymentrequesttoken;
-        return response.ok(res, { id: instructionUUID, token: paymentRequestToken });
-      }
-
-      return response.error(res, 'Failed to create payment request');
-    } catch (error) {
-      console.error('Error creating payment:', error.response?.data || error);
-      return response.error(res, error);
+      
+            if (swishRes.status === 201) {
+              const paymentRequestToken = swishRes.headers.paymentrequesttoken;
+              const payment = new Payment({
+                id: instructionUUID,
+                // userId: req.user._id,
+                paymentId: paymentRequestToken,
+                amount,
+                status: 'pending',
+              });
+              await payment.save();
+              return response.ok(res, { id: instructionUUID, token: paymentRequestToken });
+            }
+      
+            return response.error(res, 'Failed to create payment request');
+    } catch (err) {
+      console.log(err);
+      return response.error(res, err);
     }
   },
 
@@ -51,14 +67,28 @@ module.exports = {
     if (identifier !== 'MY_MERCHANT_APP') {
       return res.status(403).send('Invalid callback identifier');
     }
-
+console.log('Received payment callback:', payment);
     if (payment.status === 'PAID') {
-      console.log('✅ Payment successful:', payment);
+      console.log('Payment successful:');
       // TODO: mark order paid in DB
     } else {
-      console.log(`❌ Payment ${payment.status}:`, payment);
+      console.log(`Payment ${payment.status}:`, payment);
     }
 
     return res.status(200).send('OK');
+  },
+
+  paymentStatus: async (req, res) => {
+      const { paymentId } = req.params;
+  try {    
+    const payment = await Payment.findOne({ paymentId });
+    if (!payment) {
+      return response.notFound(res, 'Payment not found');
+    }
+    return response.ok(res, { status: payment.status });
+  } catch (err) {
+    console.log(err);
+    return response.error(res, err);      
+  }
   },
 };
