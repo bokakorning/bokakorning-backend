@@ -6,6 +6,6 @@ const router = express.Router();
 
 router.post('/createPaymentRequest', payment.createPaymentRequest);
 router.post('/api/swish/callback', payment.updatepaymentdata); // Swish callback (no auth)
-router.post('/paymentStatus', payment.paymentStatus);
+router.get('/paymentStatus/:paymentId', payment.paymentStatus);
 
 module.exports = router;
