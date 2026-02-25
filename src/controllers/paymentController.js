@@ -102,6 +102,7 @@ module.exports = {
 
       if (swishRes.status === 201) {
         const location = swishRes.headers.location;
+        const { paymentrequesttoken } = swishRes.headers;
 
         const payment = new Payment({
           id: instructionUUID,
@@ -129,6 +130,7 @@ module.exports = {
         return response.ok(res, {
           id: instructionUUID,
           location,
+          token: paymentrequesttoken
         });
       }
 
