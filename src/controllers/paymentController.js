@@ -10,22 +10,28 @@ const { notify } = require('@services/notification');
 
 // ================= HTTPS AGENT =================
 // const httpsAgent = new https.Agent({
-//   // cert: fs.readFileSync(
-//   //   path.join(__dirname, '../../certs/client.pem'),
-//   //   { encoding: 'utf8' }
-//   // ),
-//   // key: fs.readFileSync(
-//   //   path.join(__dirname, '../../certs/client.key'),
-//   //   { encoding: 'utf8' }
-//   // ),
+//   cert: fs.readFileSync(
+//     path.join(__dirname, '../../certs/client.pem'),
+//     { encoding: 'utf8' }
+//   ),
+//   key: fs.readFileSync(
+//     path.join(__dirname, '../../certs/client.key'),
+//     { encoding: 'utf8' }
+//   ),
 //   // ca: fs.readFileSync(
 //   //   path.join(__dirname, '../../certs/root.pem'),
 //   //   { encoding: 'utf8' }
 //   // ),
-//   pfx: fs.readFileSync(
-//     path.join(__dirname, '../../certs/Certificates.p12')
-//   ),
-//   passphrase: 'swish', // Only for MSS test certificates
+//   // pfx: fs.readFileSync(
+//   //   path.join(__dirname, '../../certs/Certificates.p12')
+//   // ),
+//   passphrase: '123456789', // Only for MSS test certificates
+// });
+
+// const httpsAgent = new https.Agent({
+//   cert: fs.readFileSync('./ssl/public.pem', { encoding: 'utf8' }),
+//   key: fs.readFileSync('./ssl/private.key', { encoding: 'utf8' }),
+//   ca: fs.readFileSync('./ssl/Swish_TLS_RootCA.pem', { encoding: 'utf8' }),
 // });
 
 const httpsAgent = new https.Agent({
@@ -115,7 +121,7 @@ module.exports = {
               payload.paymentid = instructionUUID;
               payload.token = location; 
               payload.session_id = `BKS-${date}`;
-              payload.user = req.body.user || req.user.id;
+              // payload.user = req.body.user || req.user.id;
               let data = new Booking(payload);
               await data.save();
               
