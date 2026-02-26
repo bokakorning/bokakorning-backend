@@ -9,24 +9,24 @@ const path = require('path');
 const { notify } = require('@services/notification');
 
 // ================= HTTPS AGENT =================
-// const httpsAgent = new https.Agent({
-//   cert: fs.readFileSync(
-//     path.join(__dirname, '../../certs/client.pem'),
-//     { encoding: 'utf8' }
-//   ),
-//   key: fs.readFileSync(
-//     path.join(__dirname, '../../certs/client.key'),
-//     { encoding: 'utf8' }
-//   ),
-//   // ca: fs.readFileSync(
-//   //   path.join(__dirname, '../../certs/root.pem'),
-//   //   { encoding: 'utf8' }
-//   // ),
-//   // pfx: fs.readFileSync(
-//   //   path.join(__dirname, '../../certs/Certificates.p12')
-//   // ),
-//   passphrase: '123456789', // Only for MSS test certificates
-// });
+const httpsAgent = new https.Agent({
+  cert: fs.readFileSync(
+    path.join(__dirname, '../../certs/client2.pem'),
+    { encoding: 'utf8' }
+  ),
+  key: fs.readFileSync(
+    path.join(__dirname, '../../certs/client.key'),
+    { encoding: 'utf8' }
+  ),
+  ca: fs.readFileSync(
+    path.join(__dirname, '../../certs/root2.pem'),
+    { encoding: 'utf8' }
+  ),
+  // pfx: fs.readFileSync(
+  //   path.join(__dirname, '../../certs/Certificates.p12')
+  // ),
+  passphrase: '123456789', // Only for MSS test certificates
+});
 
 // const httpsAgent = new https.Agent({
 //   cert: fs.readFileSync('./ssl/public.pem', { encoding: 'utf8' }),
@@ -34,17 +34,17 @@ const { notify } = require('@services/notification');
 //   ca: fs.readFileSync('./ssl/Swish_TLS_RootCA.pem', { encoding: 'utf8' }),
 // });
 
-const httpsAgent = new https.Agent({
-  pfx: fs.readFileSync(
-    path.join(__dirname, '../../certs/Swish_Merchant_TestCertificate_1234679304.p12')
-  ),
-  passphrase: 'swish', // default passphrase for Swish test certs
-  ca: fs.readFileSync(
-    path.join(__dirname, '../../certs/Swish_TLS_RootCA.pem'),
-    'utf8'
-  ),
-  keepAlive: true,
-});
+// const httpsAgent = new https.Agent({
+//   pfx: fs.readFileSync(
+//     path.join(__dirname, '../../certs/Swish_Merchant_TestCertificate_1234679304.p12')
+//   ),
+//   passphrase: 'swish', // default passphrase for Swish test certs
+//   ca: fs.readFileSync(
+//     path.join(__dirname, '../../certs/Swish_TLS_RootCA.pem'),
+//     'utf8'
+//   ),
+//   keepAlive: true,
+// });
 
 
 // Axios client
@@ -67,9 +67,10 @@ module.exports = {
       const data = {
         payeePaymentReference: Date.now().toString(),
         callbackUrl: 'https://api.bokakorning.online/payment/api/swish/callback',
-        payeeAlias: '1234679304',
+        payeeAlias: '1232989374',
         currency: 'SEK',
-        amount: Number(payload.amount).toFixed(2),
+        // amount: Number(payload.amount).toFixed(2),
+        amount: 1,
         message: payload.message || "Payment",
         callbackIdentifier: uuidv4().replace(/-/g, '').toUpperCase(),
       };
