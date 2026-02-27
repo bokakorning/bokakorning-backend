@@ -11,7 +11,7 @@ const { notify } = require('@services/notification');
 // ================= HTTPS AGENT =================
 const httpsAgent = new https.Agent({
   cert: fs.readFileSync(
-    path.join(__dirname, '../../certs/client2.pem'),
+    path.join(__dirname, '../../certs/client.pem'),
     { encoding: 'utf8' }
   ),
   key: fs.readFileSync(
@@ -19,20 +19,11 @@ const httpsAgent = new https.Agent({
     { encoding: 'utf8' }
   ),
   ca: fs.readFileSync(
-    path.join(__dirname, '../../certs/root2.pem'),
+    path.join(__dirname, '../../certs/root.pem'),
     { encoding: 'utf8' }
   ),
-  // pfx: fs.readFileSync(
-  //   path.join(__dirname, '../../certs/Certificates.p12')
-  // ),
   passphrase: '123456789', // Only for MSS test certificates
 });
-
-// const httpsAgent = new https.Agent({
-//   cert: fs.readFileSync('./ssl/public.pem', { encoding: 'utf8' }),
-//   key: fs.readFileSync('./ssl/private.key', { encoding: 'utf8' }),
-//   ca: fs.readFileSync('./ssl/Swish_TLS_RootCA.pem', { encoding: 'utf8' }),
-// });
 
 // const httpsAgent = new https.Agent({
 //   pfx: fs.readFileSync(
@@ -69,21 +60,10 @@ module.exports = {
         callbackUrl: 'https://api.bokakorning.online/payment/api/swish/callback',
         payeeAlias: '1232989374',
         currency: 'SEK',
-        // amount: Number(payload.amount).toFixed(2),
         amount: 1,
         message: payload.message || "Payment",
         callbackIdentifier: uuidv4().replace(/-/g, '').toUpperCase(),
       };
-//       const data = {
-// payeePaymentReference: 'ORDER' + Date.now(),  // also fix this — no underscores to be safe
-//   callbackUrl: 'https://api.bokakorning.online/payment/api/swish/callback', // your REAL url
-//   payeeAlias: '1234679304',
-//   currency: 'SEK',
-//   amount: amount.toString(),
-//   message: message || 'Test payment',
-// };
-
-
       const env = process.env.SWISH_ENV || 'simulator';
 
       const baseUrl =
@@ -150,10 +130,10 @@ module.exports = {
     const payment = req.body;
     const identifier = req.headers['callbackidentifier'];
 console.log('Received payment callback with identifier:', identifier);
-    if (identifier !== 'BokaKorning') {
+console.log('Received payment callback:', payment);
+    if (identifier !== process.env.SWISH_CALLBACK_IDENTIFIER) {
       return res.status(403).send('Invalid callback identifier');
     }
-console.log('Received payment callback:', payment);
     if (payment.status === 'PAID') {
       console.log('Payment successful:');
       await Payment.updateOne(
