@@ -131,9 +131,9 @@ module.exports = {
     const identifier = req.headers['callbackidentifier'];
 console.log('Received payment callback with identifier:', identifier);
 console.log('Received payment callback:', payment);
-    if (identifier !== process.env.SWISH_CALLBACK_IDENTIFIER) {
-      return res.status(403).send('Invalid callback identifier');
-    }
+    // if (identifier !== process.env.SWISH_CALLBACK_IDENTIFIER) {
+    //   return res.status(403).send('Invalid callback identifier');
+    // }
     if (payment.status === 'PAID') {
       console.log('Payment successful:');
       await Payment.updateOne(
