@@ -7,6 +7,7 @@ const https = require('https');
 const { v4: uuidv4 } = require('uuid');
 const path = require('path');
 const { notify } = require('@services/notification');
+const User = require('@models/User');
 
 // ================= HTTPS AGENT =================
 const httpsAgent = new https.Agent({
@@ -50,7 +51,8 @@ module.exports = {
     try {
       const payload = req.body;
 
-      if (!payload.amount) {
+      const amount=Number(payload.amount)
+      if (!amount) {
         return response.error(res, "Amount is required");
       }
       const instructionUUID = uuidv4().replace(/-/g, '').toUpperCase();
@@ -60,7 +62,7 @@ module.exports = {
         callbackUrl: 'https://api.bokakorning.online/payment/api/swish/callback',
         payeeAlias: '1232989374',
         currency: 'SEK',
-        amount: 1,
+        amount: amount,
         message: payload.message || "Payment",
         callbackIdentifier: uuidv4().replace(/-/g, '').toUpperCase(),
       };
@@ -88,7 +90,7 @@ module.exports = {
         const payment = new Payment({
           id: instructionUUID,
           paymentId: location,
-          amount: payload.amount,
+          amount: amount,
           status: 'pending',
         });
 
@@ -103,7 +105,7 @@ module.exports = {
               payload.paymentid = instructionUUID;
               payload.token = location; 
               payload.session_id = `BKS-${date}`;
-              // payload.user = req.body.user || req.user.id;
+              payload.user = req.body.user;
               let data = new Booking(payload);
               await data.save();
               
@@ -141,6 +143,10 @@ console.log('Received payment callback:', payment);
       { status: "PAID" }
       );
       const data = await Booking.findOneAndUpdate({ paymentid: payment.id }, { status: "PAID" });
+      await User.updateOne(
+          { _id: data?.user, firstbook: false },
+          { $set: { firstbook: true } }
+        );
       await notify(
                 data?.user,
                 'Session Created',
