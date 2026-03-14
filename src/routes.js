@@ -6,7 +6,9 @@ const transactionRoutes = require('@routes/transactionRoutes');
 const progressRoutes = require('@routes/moduleRoutes');
 const adminRoutes = require('@routes/adminRoutes');
 const paymentRoutes = require('@routes/paymentRoutes');
+const stripeRoutes = require('@routes/stripeRoutes');
 const settingRoutes = require('@routes/settingRoutes');
+const prReqRoutes = require('@routes/prReqRoutes');
 
 module.exports = (app) => {
   app.use('/auth', authRoutes);
@@ -17,5 +19,7 @@ module.exports = (app) => {
   app.use('/progress', progressRoutes);
   app.use('/admindashboard', adminRoutes);
   app.use('/payment', paymentRoutes);
+  app.use('/stripe', stripeRoutes);
   app.use('/setting', settingRoutes);
+  app.use('/peReq', prReqRoutes);
 };
