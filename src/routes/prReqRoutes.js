@@ -4,6 +4,6 @@ const authMiddleware = require('@middlewares/authMiddleware');
 
 const router = express.Router();
 router.get('/getPrReq',prReq.getPrReq);
-router.post('/updatePrReq',authMiddleware(['user', 'admin', 'instructer']),prReq.updatePrReq);
+router.post('/updatePrReq',prReq.updatePrReq);
 
 module.exports = router;
