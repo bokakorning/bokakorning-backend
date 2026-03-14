@@ -19,8 +19,7 @@ updatePrReq : async (req, res) => {
   try {
     const payload = req.body;
 
-    const updatedPrReq = await PrReq.findByIdAndUpdate(
-      payload?.id,
+    const updatedPrReq = await PrReq.findOneAndUpdate(
       payload,
       { new: true }
     );
