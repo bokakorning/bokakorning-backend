@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const response = require('../responses');
 const Stripe = require("stripe")
+const Booking = require('@models/Booking');
 const stripe = new Stripe(process.env.NEXT_PUBLIC_STRIPE_API_SECRET_KEY);
 
 
@@ -16,12 +17,13 @@ module.exports = {
         },
         // payment_method_types: ["card"],
       });
-      console.log(paymentIntent)
-      res.status(200).send({
+
+      return response.ok(res, {
         clientSecret: paymentIntent.client_secret,
         price: req.body.price,
         error: null,
       });
+
     } catch (err) {
       console.log(err);
       res.status(500).json({ success: false, error: err.message });
@@ -40,7 +42,6 @@ module.exports = {
                 let data = new Booking(payload);
                 await data.save();
                 
-  
           return response.ok(res, {message:'Booking create sucesfully'});
         
       } catch (err) {

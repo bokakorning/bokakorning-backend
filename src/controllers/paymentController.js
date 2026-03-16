@@ -142,7 +142,7 @@ console.log('Received payment callback:', payment);
       { id: payment.id },
       { status: "PAID" }
       );
-      const data = await Booking.findOneAndUpdate({ paymentid: payment.id }, { status: "PAID" });
+      const data = await Booking.findOneAndUpdate({ paymentid: payment.id }, { payment_status: "PAID" });
       await User.updateOne(
           { _id: data?.user, firstbook: false },
           { $set: { firstbook: true } }
