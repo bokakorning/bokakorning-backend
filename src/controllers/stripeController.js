@@ -12,10 +12,10 @@ module.exports = {
       const paymentIntent = await stripe.paymentIntents.create({
         amount: priceFormatStripe,
         currency: req.body.currency,
-        automatic_payment_methods: {
-          enabled: true,
-        },
-        // payment_method_types: ["card"],
+        // automatic_payment_methods: {
+        //   enabled: true,
+        // },
+        payment_method_types: ["card", "klarna"]
       });
 
       return response.ok(res, {
