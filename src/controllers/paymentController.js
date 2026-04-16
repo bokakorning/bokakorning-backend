@@ -103,6 +103,7 @@ module.exports = {
                 .slice(0, 17); // YYYYMMDDHHMMSSmmm
         
               payload.paymentid = instructionUUID;
+              payload.total = amount;
               payload.token = location; 
               payload.session_id = `BKS-${date}`;
               payload.user = req.body.user;
