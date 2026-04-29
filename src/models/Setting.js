@@ -6,6 +6,9 @@ const settingSchema = new mongoose.Schema(
     per_hour_hour: {
       type: Number,
     },
+    course_vat: {
+      type: Number,
+    },
   },
   {
     timestamps: true,

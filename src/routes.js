@@ -8,6 +8,9 @@ const adminRoutes = require('@routes/adminRoutes');
 const paymentRoutes = require('@routes/paymentRoutes');
 const stripeRoutes = require('@routes/stripeRoutes');
 const settingRoutes = require('@routes/settingRoutes');
+const coursesSettingRoutes = require('@routes/coursesSettingRoutes');
+const coursesRoutes = require('@routes/coursesRoutes');
+const coursesBookingRoutes = require('@routes/coursesBookingRoutes');
 
 module.exports = (app) => {
   app.use('/auth', authRoutes);
@@ -20,4 +23,7 @@ module.exports = (app) => {
   app.use('/payment', paymentRoutes);
   app.use('/stripe', stripeRoutes);
   app.use('/setting', settingRoutes);
+  app.use('/courseSetting', coursesSettingRoutes);
+  app.use('/courses', coursesRoutes);
+  app.use('/coursesBooking', coursesBookingRoutes);
 };
