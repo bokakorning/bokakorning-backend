@@ -1,5 +1,8 @@
 const Courses = require('@models/Courses');
-const response = require("../responses")
+const response = require("../responses");
+const { s3, DeleteObjectCommand } = require('@services/fileUpload');
+
+const IMAGE_LIMIT = 100 * 1024; // 100 KB
 
 module.exports = {
 createCourses : async (req, res) => {
@@ -47,17 +50,54 @@ getCoursesForUser : async (req, res) => {
 },
 updateCourses : async (req, res) => {
   try {
-    const payload = req.body;
-
+    const { id, ...fields } = req.body;
     const updatedSetting = await Courses.findByIdAndUpdate(
-      payload?.id,
-      payload,
-      { new: true }
+      id,
+      { $set: fields },
+      { new: true, runValidators: false }
     );
     if (!updatedSetting) {
       return res.status(404).json({ message: 'Courses not found' });
     }
     return response.ok(res, updatedSetting);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+},
+
+uploadCourseMedia : async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: 'No file uploaded' });
+    }
+    const isImage = req.file.mimetype.startsWith('image/');
+    if (isImage && req.file.size > IMAGE_LIMIT) {
+      // Delete the already-uploaded S3 object and reject
+      await s3.send(new DeleteObjectCommand({
+        Bucket: process.env.BUCKET_NAME,
+        Key: req.file.key,
+      }));
+      return res.status(400).json({ message: `Image must be under 100 KB (uploaded: ${Math.round(req.file.size / 1024)} KB)` });
+    }
+    return response.ok(res, {
+      media_url: req.file.location,
+      media_type: isImage ? 'image' : 'video',
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+},
+
+getEnrolledUsers : async (req, res) => {
+  try {
+    const { course_id } = req.query;
+    if (!course_id) return res.status(400).json({ message: 'course_id is required' });
+    const course = await Courses.findById(course_id)
+      .populate('enrolled_user', 'name email phone image');
+    if (!course) return res.status(404).json({ message: 'Course not found' });
+    return response.ok(res, course.enrolled_user);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal Server Error' });
