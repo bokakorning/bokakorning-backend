@@ -5,7 +5,12 @@ const contentRoutes = require('@routes/contentManagementRoutes');
 const transactionRoutes = require('@routes/transactionRoutes');
 const progressRoutes = require('@routes/moduleRoutes');
 const adminRoutes = require('@routes/adminRoutes');
-// const paymentRoutes = require('@routes/paymentRoutes');
+const paymentRoutes = require('@routes/paymentRoutes');
+const stripeRoutes = require('@routes/stripeRoutes');
+const settingRoutes = require('@routes/settingRoutes');
+const coursesSettingRoutes = require('@routes/coursesSettingRoutes');
+const coursesRoutes = require('@routes/coursesRoutes');
+const coursesBookingRoutes = require('@routes/coursesBookingRoutes');
 
 module.exports = (app) => {
   app.use('/auth', authRoutes);
@@ -15,5 +20,10 @@ module.exports = (app) => {
   app.use('/content', contentRoutes);
   app.use('/progress', progressRoutes);
   app.use('/admindashboard', adminRoutes);
-  // app.use('/payment', paymentRoutes);
+  app.use('/payment', paymentRoutes);
+  app.use('/stripe', stripeRoutes);
+  app.use('/setting', settingRoutes);
+  app.use('/courseSetting', coursesSettingRoutes);
+  app.use('/courses', coursesRoutes);
+  app.use('/coursesBooking', coursesBookingRoutes);
 };

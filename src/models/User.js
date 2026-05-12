@@ -61,6 +61,10 @@ const userSchema = new mongoose.Schema(
       default: 'Pending',
       enum: ['Pending', 'Approved', 'Rejected'],
     },
+    firstbook: {
+      type: Boolean,
+      default: false,
+    },
 
     ///////Instructer Fields///
     vehicle_model: {
