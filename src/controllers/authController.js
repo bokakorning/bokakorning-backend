@@ -54,6 +54,7 @@ module.exports = {
         message: 'User registered successfully',
         user: userResponse,
       });
+      
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: 'Server error' });
@@ -397,7 +398,7 @@ module.exports = {
       }
 
       const hashedPassword = await bcrypt.hash(password, 10);
-      
+
       if (payload.location && typeof payload.location === 'string') {
         payload.location = JSON.parse(payload.location);
       }
