@@ -209,6 +209,27 @@ toggleCourseTypePaidStatus : async (req, res) => {
   }
 },
 
+updateCourseTypeQuestions : async (req, res) => {
+  try {
+    const { courseTypeId, questions } = req.body;
+    if (!courseTypeId) {
+      return res.status(400).json({ message: 'courseTypeId is required' });
+    }
+    const updatedSetting = await CoursesSettings.findOneAndUpdate(
+      { 'course_types._id': courseTypeId },
+      { $set: { 'course_types.$.questions': questions || [] } },
+      { new: true }
+    );
+    if (!updatedSetting) {
+      return res.status(404).json({ message: 'Course type not found' });
+    }
+    return response.ok(res, updatedSetting);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+},
+
 deleteCourseTypeInCourseSetting : async (req, res) => {
   try {
     const { courseTypeId } = req.body;

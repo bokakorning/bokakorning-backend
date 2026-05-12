@@ -12,5 +12,6 @@ router.post('/addCourseTypeInCourseSetting', authMiddleware(['admin']), coursesS
 router.post('/toggleCourseTypePaidStatus', authMiddleware(['admin']), coursesSettings.toggleCourseTypePaidStatus);
 router.post('/updateCourseTypeInCourseSetting', authMiddleware(['admin']), coursesSettings.updateCourseTypeInCourseSetting);
 router.post('/deleteCourseTypeInCourseSetting', authMiddleware(['admin']), coursesSettings.deleteCourseTypeInCourseSetting);
+router.post('/updateCourseTypeQuestions', authMiddleware(['admin']), coursesSettings.updateCourseTypeQuestions);
 
 module.exports = router;
