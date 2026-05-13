@@ -9,13 +9,11 @@ module.exports = {
   poststripe: async (req, res) => {
     try {
       const priceFormatStripe = Math.round(req.body.price * 100);
+      const methodType = req.body.payment_method_type;
       const paymentIntent = await stripe.paymentIntents.create({
         amount: priceFormatStripe,
         currency: req.body.currency,
-        // automatic_payment_methods: {
-        //   enabled: true,
-        // },
-        payment_method_types: ["card", "klarna"]
+        payment_method_types: methodType ? [methodType] : ["card", "klarna"],
       });
 
       return response.ok(res, {

@@ -240,6 +240,7 @@ module.exports = {
   updateprofile: async (req, res) => {
     try {
       const payload = req.body;
+      const UserId = req.user.id || req.body.user_id;
 
       if (req.files && req.files?.image?.length > 0) {
         payload.image = req.files?.image?.[0].location;
@@ -247,7 +248,7 @@ module.exports = {
       if (req.files && req.files?.doc?.length > 0) {
         payload.doc = req.files?.doc?.[0].location;
       }
-      const user = await User.findByIdAndUpdate(req.user.id, payload, {
+      const user = await User.findByIdAndUpdate(UserId, payload, {
         new: true,
         upsert: true,
       });
