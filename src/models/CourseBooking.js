@@ -12,7 +12,7 @@ const coursesBookingSchema = new mongoose.Schema(
       },
       payment_mode: {
         type: String,
-        enum: ['swish', 'stripe','free'],
+        enum: ['swish', 'stripe','free','combo'],
       },
       payment_status: {
         type: String,
