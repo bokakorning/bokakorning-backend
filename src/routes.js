@@ -11,6 +11,7 @@ const settingRoutes = require('@routes/settingRoutes');
 const coursesSettingRoutes = require('@routes/coursesSettingRoutes');
 const coursesRoutes = require('@routes/coursesRoutes');
 const coursesBookingRoutes = require('@routes/coursesBookingRoutes');
+const comboRoutes = require('@routes/comboRoutes');
 
 module.exports = (app) => {
   app.use('/auth', authRoutes);
@@ -26,4 +27,5 @@ module.exports = (app) => {
   app.use('/courseSetting', coursesSettingRoutes);
   app.use('/courses', coursesRoutes);
   app.use('/coursesBooking', coursesBookingRoutes);
+  app.use('/combo', comboRoutes);
 };

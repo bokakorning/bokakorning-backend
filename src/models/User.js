@@ -97,6 +97,13 @@ const userSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    combo: {
+      package_id: { type: mongoose.Schema.Types.ObjectId, ref: 'ComboPackage', default: null },
+      package_name: { type: String, default: '' },
+      driving_lessons_remaining: { type: Number, default: 0 },
+      course_lessons_remaining: { type: Number, default: 0 },
+      purchased_at: { type: Date, default: null },
+    },
   },
   { timestamps: true },
 );
